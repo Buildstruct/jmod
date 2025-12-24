@@ -445,7 +445,7 @@ function JMod.PlyHasArmorEff(ply, eff)
 end
 
 function JMod.IsAdmin(ply)
-	return (game.SinglePlayer()) or ((IsValid(ply) and ply:IsPlayer()) and (ply:IsUserGroup("admin") or ply:IsUserGroup("superadmin")))
+	return (game.SinglePlayer()) or ((IsValid(ply) and ply:IsPlayer()) and ply:IsAdmin())
 end
 
 function JMod.DebugPos(pos, siz, label)

@@ -350,7 +350,7 @@ function JMod.RemoveRadioOutPost(teamID)
 end
 
 concommand.Add("jmod_debug_addoutpost", function(ply, cmd, args)
-	if not ply:IsUserGroup("superadmin") then return end
+	if not ply:IsSuperAdmin() then return end
 	local Team = 0
 
 	if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
@@ -363,7 +363,7 @@ concommand.Add("jmod_debug_addoutpost", function(ply, cmd, args)
 end, nil, "Adds another radio outpost for your team.")
 
 concommand.Add("jmod_debug_removeoutpost", function(ply, cmd, args)
-	if not ply:IsUserGroup("superadmin") then return end
+	if not ply:IsSuperAdmin() then return end
 	local Team = 0
 
 	if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
@@ -389,7 +389,7 @@ local function GetPlayerFromNick(nickname)
 end
 
 concommand.Add("jmod_airdropplayer", function(ply, cmd, args) 
-	if not ply:IsUserGroup("superadmin") then return end
+	if not ply:IsSuperAdmin() then return end
 	
 	local TargetPly, TargetPos, Punish = GetPlayerFromNick(args[1]), ply:GetPos(), false
 
