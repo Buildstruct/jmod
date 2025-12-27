@@ -239,6 +239,7 @@ function SWEP:OnDrop()
 	end
 	Bucket:SetPos(Pos)
 	Bucket:SetAngles(Ang)
+	JMod.SetEZowner(Bucket, self:GetOwner())
 	Bucket:Spawn()
 	Bucket:Activate()
 
