@@ -1,7 +1,7 @@
 ﻿-- from the Advanced Light Entities addon
 AddCSLuaFile()
 DEFINE_BASECLASS("jmod_base_light")
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.PrintName = "Expensive Light (new)"
 ENT.Category = "Render"
