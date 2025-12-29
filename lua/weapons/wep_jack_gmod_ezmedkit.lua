@@ -536,7 +536,7 @@ function SWEP:OnDrop()
 	end
 	Kit:SetPos(Pos)
 	Kit:SetAngles(Ang)
-	JMod.SetEZowner(Kit, self:GetOwner())
+	JMod.SetEZowner(Kit, self.EZdropper)
 	Kit:Spawn()
 	Kit:Activate()
 	Kit:SetSupplies(self:GetSupplies())
