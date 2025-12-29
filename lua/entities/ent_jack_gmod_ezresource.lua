@@ -250,6 +250,7 @@ if SERVER then
 				local Box = ents.Create(self.ClassName)
 				Box:SetPos(self:GetPos() + self:GetUp() * 5)
 				Box:SetAngles(self:GetAngles())
+				JMod.SetEZowner(Box, activator)
 				Box:Spawn()
 				Box:Activate()
 				Box:SetEZsupplies(self.EZsupplies, NewCountOne)
