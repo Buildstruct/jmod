@@ -68,6 +68,7 @@ function JMod.StartResourceConnection(machine, ply, resType)
 	else
 		Plugy.EZconnectionResourceType = JMod.EZ_RESOURCE_TYPES.POWER
 	end
+	JMod.SetEZowner(Plugy, ply)
 	Plugy:Spawn()
 	Plugy:Activate()
 	machine.EZconnectorPlug = Plugy

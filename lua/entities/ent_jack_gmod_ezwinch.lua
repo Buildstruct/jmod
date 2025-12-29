@@ -147,6 +147,7 @@ if SERVER then
 		Hooky:SetAngles(self:GetAngles())
 		Hooky.EZconnector = machine
 		Hooky.NextStick = CurTime() + 1
+		JMod.SetEZowner(Hooky, self.EZowner)
 		Hooky:Spawn()
 		Hooky:Activate()
 		self.Hooker = Hooky
