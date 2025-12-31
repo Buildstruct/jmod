@@ -776,6 +776,8 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 
 	if not(IsValid(TargetEntity)) then ply:PrintMessage(HUD_PRINTCENTER, "Nothing to grab") return end
 
+	if hook.Run("JMod_CanGrabItem", TargetEntity, ply) == false then return end
+
 	if TargetEntity.JModInv and (next(TargetEntity.JModInv.items) or next(TargetEntity.JModInv.EZresources)) then
 		JMod.UpdateInv(TargetEntity)
 		JMod.OpenEntityInventory(TargetEntity, ply)
