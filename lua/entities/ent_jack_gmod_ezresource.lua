@@ -324,12 +324,12 @@ if SERVER then
 		timer.Simple(math.Rand(0, 1), function()
 			if not(IsValid(self)) then return end
 			local Explodes, Boolets, Flames = 0, 0, 0
-			if self.Explosive then Explodes = math.max(FuelLeft * self.Explosive * 0.05, 1) end
-			if self.IsBoolet then Boolets = math.max(FuelLeft * self.IsBoolet * 1, 1) end
-			if self.Flammable and (self.Flammable > 0.5) then Flames = math.max(FuelLeft * self.Flammable * 0.05, 1) end
-			JMod.EnergeticsCookoff(self:GetPos(), self, FuelLeft / self.MaxResource, Explodes, Boolets, Flames)
+			if self.Explosive then Explodes = math.max(math.min(FuelLeft, 1000) * self.Explosive * 0.05, 1) end
+			if self.IsBoolet then Boolets = math.max(math.min(FuelLeft, 1000) * self.IsBoolet * 1, 1) end
+			if self.Flammable and (self.Flammable > 0.5) then Flames = math.max(math.min(FuelLeft, 1000) * self.Flammable * 0.05, 1) end
+			JMod.EnergeticsCookoff(self:GetPos(), self, math.min(FuelLeft / self.MaxResource, 10), Explodes, Boolets, Flames)
 			if self.Fumigate then
-				for i = 1, FuelLeft * 0.2 do
+				for i = 1, math.min(FuelLeft, 1000) * 0.2 do
 					timer.Simple(i / 200, function()
 						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 						Gas:SetPos(SelfPos)
