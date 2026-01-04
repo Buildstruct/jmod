@@ -220,9 +220,9 @@ if SERVER then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
-			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, math.min(self:GetResource() / self.MaxResource, 10), 1, 1)
 			if self.UseEffect then
-				for i = 1, self:GetResource() / 10 do			
+				for i = 1, math.min(self:GetResource() / 10, 10) do			
 					self:UseEffect(Pos, game.GetWorld(), true)
 				end
 			end
