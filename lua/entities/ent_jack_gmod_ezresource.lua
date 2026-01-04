@@ -171,7 +171,7 @@ if SERVER then
 				if Used > 0 then
 					self:SetEZsupplies(self.EZsupplies, Resource - Used)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), Used / self.MaxResource, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), math.min(Used / self.MaxResource, 10), 1, 1)
 
 					if Used >= Resource then
 						self.Loaded = true
@@ -200,7 +200,7 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, math.min(self:GetResource() / self.MaxResource, 10), 1, 1)
 					if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
 					end
@@ -263,7 +263,7 @@ if SERVER then
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetEZsupplies(self.EZsupplies, NewCountTwo)
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResource, 1)
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, math.min(self:GetResource() / self.MaxResource, 10), 1)
 			end
 		elseif AltPressed then
 			local Wep = activator:GetActiveWeapon()
@@ -302,7 +302,7 @@ if SERVER then
 			local FuelLeft = self:GetResource()
 			if self.Flammable then
 				if FuelLeft <= 2 * self.Flammable then
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, FuelLeft / self.MaxResource, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, math.min(FuelLeft / self.MaxResource, 10), 1, 1)
 					self:Remove()
 				else
 					self:SetEZsupplies(self.EZsupplies, FuelLeft - math.random(0, 2 * self.Flammable), self)
