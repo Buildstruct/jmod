@@ -65,6 +65,7 @@ JMod.EZ_RESOURCE_TYPES = {
 	FISSILEMATERIAL = "fissile material",
 	--
 	ANTIMATTER = "antimatter"
+	ABYSS = "abyssium"
 }
 
 JMod.PrimitiveResourceTypes = {
@@ -142,6 +143,7 @@ JMod.EZ_RESOURCE_ENTITIES = {
 	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter",
 	[JMod.EZ_RESOURCE_TYPES.SAND] = "ent_jack_gmod_ezsand",
 	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "ent_jack_gmod_ezconcrete"
+	[JMod.EZ_RESOURCE_TYPES.ABYSS] = "bs_abyssium"
 }
 
 JMod.EZ_RESOURCE_TYPE_METHODS = {
@@ -753,4 +755,5 @@ Wood_Solid.ImpactSoft
 Wood_Solid.ScrapeRough
 Wood_Solid.ScrapeSmooth
 Wood_Solid.Strain
+
 --]]
