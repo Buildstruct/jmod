@@ -64,7 +64,7 @@ JMod.EZ_RESOURCE_TYPES = {
 	ADVANCEDPARTS = "advanced parts",
 	FISSILEMATERIAL = "fissile material",
 	--
-	ANTIMATTER = "antimatter"
+	ANTIMATTER = "antimatter",
 	ABYSS = "abyssium"
 }
 
@@ -142,7 +142,7 @@ JMod.EZ_RESOURCE_ENTITIES = {
 	[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = "ent_jack_gmod_ezfissilematerial",
 	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter",
 	[JMod.EZ_RESOURCE_TYPES.SAND] = "ent_jack_gmod_ezsand",
-	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "ent_jack_gmod_ezconcrete"
+	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "ent_jack_gmod_ezconcrete",
 	[JMod.EZ_RESOURCE_TYPES.ABYSS] = "bs_abyssium"
 }
 
