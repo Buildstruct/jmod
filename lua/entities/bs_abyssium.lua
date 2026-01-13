@@ -27,11 +27,10 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, drawvec, drawang, .05, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .05, 600, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ABYSS, self:GetResource(), nil, 0, 0, 200, false)
 		end)
 	end
 
 	--language.Add(ENT.ClassName, ENT.PrintName)
 end
-
