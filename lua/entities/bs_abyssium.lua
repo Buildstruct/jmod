@@ -2,7 +2,7 @@
 ENT.Base = "ent_jack_gmod_ezresource"
 ENT.PrintName = "BS Abyssium"
 ENT.Category = "JMod - EZ Resources"
-ENT.IconOverride = "materials/ez_resource_icons/abyssium.png"
+ENT.IconOverride = "materials/entities/abyssium.png"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
@@ -34,3 +34,4 @@ elseif CLIENT then
 
 	--language.Add(ENT.ClassName, ENT.PrintName)
 end
+
