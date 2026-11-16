@@ -283,7 +283,7 @@ function SWEP:OnDrop()
 		Kit:GetPhysicsObject():SetVelocity(Owner:GetVelocity())
 		Kit.Electricity = self:GetElectricity()
 		self:Remove()
-	end
+	end)
 end
 
 local Vignet = Material("mats_jack_gmod_sprites/vignette.png")

@@ -547,7 +547,6 @@ function SWEP:OnDrop()
 		end
 
 		self:Remove()
-	end)
 end
 
 function SWEP:HealEffect(Ent)
