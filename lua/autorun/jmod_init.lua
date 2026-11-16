@@ -252,7 +252,7 @@ JMod.HitMatColors = {
 	[MAT_WARPSHIELD] = {Color(255, 255, 255)}
 }
 
-JMod.DefualtArmorTable={
+JMod.DefaultArmorTable={
 	[DMG_BUCKSHOT]=.1,
 	[DMG_CRUSH]=.5,
 	[DMG_VEHICLE]=.5,

@@ -141,7 +141,7 @@ if(SERVER)then
 			self:SetGrade(JMod.EZ_GRADE_BASIC)
 		end
 		self:InitPerfSpecs()
-		self.DamageModifierTable = JMod.DefualtArmorTable
+		self.DamageModifierTable = JMod.DefaultArmorTable
 		self.BackupRecipe = self.BackupRecipe or {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
 
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
