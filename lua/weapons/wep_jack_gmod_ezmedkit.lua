@@ -542,11 +542,12 @@ function SWEP:OnDrop()
 	Kit:SetSupplies(self:GetSupplies())
 	local Phys = Kit:GetPhysicsObject()
 
-	if Phys then
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
-	end
+		if Phys then
+			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+		end
 
-	self:Remove()
+		self:Remove()
+	end)
 end
 
 function SWEP:HealEffect(Ent)

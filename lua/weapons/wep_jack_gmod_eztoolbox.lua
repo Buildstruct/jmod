@@ -805,16 +805,17 @@ function SWEP:OnDrop()
 	Kit:Spawn()
 	Kit:Activate()
 
-	Kit:SetElectricity(self:GetElectricity())
-	Kit:SetGas(self:GetGas())
+		Kit:SetElectricity(self:GetElectricity())
+		Kit:SetGas(self:GetGas())
 
-	local Phys = Kit:GetPhysicsObject()
+		local Phys = Kit:GetPhysicsObject()
 
-	if Phys then
-		Phys:SetVelocity(self:GetVelocity() / 2)
-	end
+		if Phys then
+			Phys:SetVelocity(self:GetVelocity() / 2)
+		end
 
-	self:Remove()
+		self:Remove()
+	end)
 end
 
 function SWEP:OnRemove()

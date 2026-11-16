@@ -44,6 +44,7 @@ list.Set("ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
 local BlurryMenus = CreateClientConVar("jmod_cl_blurry_menus", "1", true, true, "Enables blurry menus, not for potatoes", 0, 1)
 local SortEnabled = CreateClientConVar("jmod_cl_sort_enabled", "1", true, true, "Sorts enabled menu buttons to the top of the list", 0, 1)
+local LastColor = Color(255, 255, 255)
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
 function EZBlurBackground(panel)
@@ -130,6 +131,7 @@ local function PopulateFriendList(parent, friendList, myself, W, H)
 	end
 end
 
+local unitsString, perSecondString = " UNITS", " PER SECOND"
 function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, font, opacity, rateDisplay, brite)
 	font = font or "JMod-Stencil"
 	opacity = opacity or 150
@@ -141,10 +143,10 @@ function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, fo
 	end
 	surface.DrawTexturedRect(x - siz / 2, y - siz / 2, siz, siz)
 	local Col = Color(brite, brite, brite, opacity)
-	local UnitText = tostring(amt) .. " UNITS"
+	local UnitText = tostring(amt) .. unitsString
 
 	if rateDisplay then
-		UnitText = tostring(amt) .. " PER SECOND"
+		UnitText = tostring(amt) .. perSecondString
 	end
 
 	if vertical then
@@ -172,6 +174,8 @@ end
 
 function JMod.HoloGraphicDisplay(ent, relPos, relAng, scale, renderDist, renderFunc, absolutePositions)
 	if absolutePositions then
+		local DirToPos = (EyePos() - relPos):GetNormalized()
+		if math.abs(EyeAngles():Forward():Dot(DirToPos)) < 0.5 then return end
 		if EyePos():Distance(relPos) < renderDist then
 			cam.Start3D2D(relPos, relAng, scale)
 			renderFunc()
@@ -206,6 +210,8 @@ function JMod.HoloGraphicDisplay(ent, relPos, relAng, scale, renderDist, renderF
 		if not ent then
 			RenderPos = Pos + Vector(0, 0, 50)
 		end
+		local DirToPos = (EyePos() - RenderPos):GetNormalized()
+		if math.abs(EyeAngles():Forward():Dot(DirToPos)) < 0.5 then return end
 
 		cam.Start3D2D(RenderPos, Ang, scale)
 		renderFunc()
@@ -347,6 +353,19 @@ net.Receive("JMod_ColorAndArm", function()
 	end
 end)
 
+local function SendArmorColor(ent, autocolor, color, bit)
+	net.Start("JMod_ArmorColor")
+	net.WriteEntity(ent)
+	net.WriteBool(autocolor)
+	net.WriteColor(color)
+	net.WriteBit(bit)
+	net.SendToServer()
+	if not autocolor then
+		input.SetCursorPos(OldMouseX, OldMouseY)
+		LastColor = color
+	end
+end
+
 net.Receive("JMod_ArmorColor", function()
 	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
 	local Durability, MaxDurability = net.ReadFloat(), net.ReadFloat()
@@ -408,38 +427,34 @@ net.Receive("JMod_ArmorColor", function()
 	Butt:SetText("EQUIP")
 
 	function Butt:DoClick()
-		net.Start("JMod_ArmorColor")
-		net.WriteEntity(Ent)
-		net.WriteBool(false)
-		local Col = Picker:GetColor()
-		net.WriteColor(Color(Col.r, Col.g, Col.b))
-		net.WriteBit(true)
-		net.SendToServer()
+		SendArmorColor(Ent, false, Picker:GetColor(), true)
 		Frame:Close()
 	end
 
-	local ButtWhat = vgui.Create("DButton", Frame)
-	ButtWhat:SetPos(100, 265)
-	ButtWhat:SetSize(95, 50)
-	ButtWhat:SetText("AUTO-COLOR")
+	local ButtPlyColor = vgui.Create("DButton", Frame)
+	ButtPlyColor:SetPos(100, 265)
+	ButtPlyColor:SetSize(95, 25)
+	ButtPlyColor:SetText("PLYER COLOR")
 
-	function ButtWhat:DoClick()
-		net.Start("JMod_ArmorColor")
-		net.WriteEntity(Ent)
-		net.WriteBool(true)
-		net.WriteColor(LocalPlayer():GetPlayerColor():ToColor())
-		net.WriteBit(false)
-		net.SendToServer()
+	function ButtPlyColor:DoClick()
+		SendArmorColor(Ent, true, LocalPlayer():GetPlayerColor():ToColor(), false)
 		OldMouseX, OldMouseY = input.GetCursorPos()
 		Frame:Close()
 	end
+
+	local ButtLastColor = vgui.Create("DButton", Frame)
+	ButtLastColor:SetPos(100, 290)
+	ButtLastColor:SetSize(95, 25)
+	ButtLastColor:SetText("LAST COLOR")
+
+	function ButtLastColor:DoClick()
+		SendArmorColor(Ent, true, LastColor, false)
+		OldMouseX, OldMouseY = input.GetCursorPos()
+		Frame:Close()
+	end
+
 	if LocalPlayer():KeyDown(IN_SPEED) then
-		net.Start("JMod_ArmorColor")
-		net.WriteEntity(Ent)
-		net.WriteBool(false)
-		net.WriteColor(LocalPlayer():GetPlayerColor():ToColor())
-		net.WriteBit(true)
-		net.SendToServer()
+		SendArmorColor(Ent, false, LocalPlayer():GetPlayerColor():ToColor(), true)
 		Frame:Close()
 	end
 end)
@@ -567,13 +582,25 @@ local function CacheSelectionMenuIcon(name, info)
 	if not JMod.SelectionMenuIcons[name] then
 		if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
 			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
+		elseif file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".jpg", "GAME") then
+			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".jpg")
+		elseif file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".jpeg", "GAME") then
+			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".jpeg")
 		elseif info then
 			if file.Exists("materials/entities/" .. tostring(info) .. ".png", "GAME") then
 				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".png")
+			elseif file.Exists("materials/entities/" .. tostring(info) .. ".jpg", "GAME") then
+				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".jpg")
+			elseif file.Exists("materials/entities/" .. tostring(info) .. ".jpeg", "GAME") then
+				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".jpeg")
 			elseif string.find(tostring(info), ".mdl") then
 				local CleanStringName = string.Replace(tostring(info), ".mdl", "")
 				if file.Exists("materials/spawnicons/" .. CleanStringName .. ".png", "GAME") then
 					JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. CleanStringName .. ".png")
+				elseif file.Exists("materials/spawnicons/" .. CleanStringName .. ".jpg", "GAME") then
+					JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. CleanStringName .. ".jpg")
+				elseif file.Exists("materials/spawnicons/" .. CleanStringName .. ".jpeg", "GAME") then
+					JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. CleanStringName .. ".jpeg")
 				else
 					local Buttalony = vgui.Create("SpawnIcon")
 					Buttalony:SetModel(tostring(info))
@@ -618,7 +645,15 @@ local function CacheSelectionMenuIcon(name, info)
 					end
 
 					if not IsResource then
-						JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						if file.Exists("materials/entities/" .. itemClass .. ".png", "GAME") then
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						elseif file.Exists("materials/entities/" .. itemClass .. ".jpg", "GAME") then
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".jpg")
+						elseif file.Exists("materials/entities/" .. itemClass .. ".jpeg", "GAME") then
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".jpeg")
+						else
+							JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						end
 					end
 				end
 			end
@@ -810,6 +845,11 @@ net.Receive("JMod_EZtoolbox", function()
 				local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
 				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, sizeScale = info.sizeScale, SpawnAngles = Ang or Angle(0, 0, 0)}
 			end
+		elseif info.EZpreview then
+			ent.EZpreview = table.FullCopy(info.EZpreview)
+			ent.EZpreview.Box = ent.EZpreview.Box or {mins = Vector(-10, -10, -10), maxs = Vector(10, 10, 10)}
+			ent.EZpreview.sizeScale = ent.EZpreview.sizeScale or 1
+			ent.EZpreview.SpawnAngles = ent.EZpreview.SpawnAngles or Angle(0, 0, 0)
 		else
 			local temp_ent
 			if (string.Right(info["results"], 4) == ".mdl") then
@@ -1322,14 +1362,23 @@ local ArmorSlotButtons = {
 				local Col = ColorPicker:GetColor()
 				net.WriteColor(Color(Col.r, Col.g, Col.b))
 				net.SendToServer()
+				LastColor = Color(Col.r, Col.g, Col.b)
 			end
 
-			local AutoButtony = vgui.Create("DButton", Panel)
-			AutoButtony:SetPos(100, 245)
-			AutoButtony:SetSize(95, 50)
-			AutoButtony:SetText("AUTO-COLOR")
-			AutoButtony.DoClick = function()
+			local PlyColorButtony = vgui.Create("DButton", Panel)
+			PlyColorButtony:SetPos(100, 245)
+			PlyColorButtony:SetSize(95, 25)
+			PlyColorButtony:SetText("PLYER COLOR")
+			PlyColorButtony.DoClick = function()
 				ColorPicker:SetColor(LocalPlayer():GetPlayerColor():ToColor())
+			end
+
+			local LastColorButtony = vgui.Create("DButton", Panel)
+			LastColorButtony:SetPos(100, 270)
+			LastColorButtony:SetSize(95, 25)
+			LastColorButtony:SetText("LAST COLOR")
+			LastColorButtony.DoClick = function()
+				ColorPicker:SetColor(LastColor)
 			end
 
 			OpenDropdown = Panel
@@ -1530,11 +1579,28 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 	end
 
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
-	local Matty = nil
+	local Matty, HelpName = nil, itemTable.name
 	if string.find(itemTable.ent:GetClass(), "prop_") then
 		Buttalony:Remove()
 		Buttalony = vgui.Create("SpawnIcon", scrollFrame)
 		Buttalony:SetModel(itemTable.name)
+	elseif itemTable.ent:GetClass() == "ent_jack_gmod_ezcompactbox" then 
+		local Contents = itemTable.ent:GetContents()
+		if IsValid(Contents) then
+			if string.find(Contents:GetClass(), "prop_") then
+				local ModelString = Contents:GetModel()
+				Buttalony:Remove()
+				Buttalony = vgui.Create("SpawnIcon", scrollFrame)
+				Buttalony:SetModel(ModelString)
+				HelpName = (string.Replace(ModelString, ".mdl", "")) .. " [Boxed]"
+			else
+				Matty = CacheSelectionMenuIcon(Contents.PrintName or Contents:GetClass(), Contents:GetClass())
+				if Matty then
+					Buttalony:SetMaterial(Matty)
+				end
+				HelpName = (Contents.PrintName or Contents:GetClass()) .. " [Boxed]"
+			end
+		end
 	else
 		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.ent:GetClass())
 		if Matty then
@@ -1542,7 +1608,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 		end
 	end
 
-	Buttalony:SetText("")--itemTable.name)
+	Buttalony:SetText("")--HelpName)
 	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
 	Buttalony:SetCursor("hand")
@@ -1556,10 +1622,10 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			surface.SetDrawColor(255, 255, 255, 100)
 			surface.DrawOutlinedRect(0, 0, w, h, 1)
 		end
-		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		--draw.SimpleText(HelpName, "DermaDefault", Buttalony:GetWide() / 2, 40, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
-	local HelpStr = itemTable.name..":\n"..(itemTable.vol or "N/A").." Volume"
+	local HelpStr = HelpName..":\n"..(itemTable.vol or "N/A").." Volume"
 	
 	Buttalony:SetTooltip(HelpStr)
 	

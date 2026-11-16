@@ -8,6 +8,7 @@ ENT.PrintName = "EZ Shovel"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.DropClass = "wep_jack_gmod_ezshovel"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
@@ -21,7 +22,7 @@ if SERVER then
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent, ply)
-		if JMod.Config.Machines.SpawnMachinesFull then
+		if JMod.Config and JMod.Config.Machines.SpawnMachinesFull then
 			ent.SpawnFull = true
 		end
 		ent:Spawn()
@@ -67,9 +68,9 @@ if SERVER then
 	function ENT:Use(activator)
 		if JMod.IsAltUsing(activator) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezshovel") then
-			activator:Give("wep_jack_gmod_ezshovel")
-			activator:SelectWeapon("wep_jack_gmod_ezshovel")
+		elseif not activator:HasWeapon(self.DropClass) then
+			activator:Give(self.DropClass)
+			activator:SelectWeapon(self.DropClass)
 
 			self:Remove()
 		else

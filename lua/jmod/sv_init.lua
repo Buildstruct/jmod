@@ -10,12 +10,12 @@ local function JackaSpawnHook(ply, transition)
 	ply.EZragdoll = nil
 	ply.JModFriends = ply.JModFriends or {}
 	ply.JModInv = ply.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
-
-	JMod.CalcSpeed(ply)
-	JMod.EZarmorSync(ply)
+	ply.JModSpawnTime = CurTime()
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
 	JMod.SyncBleeding(ply)
+	JMod.CalcSpeed(ply)
+	JMod.EZarmorSync(ply)
 
 	timer.Simple(0, function()
 		if IsValid(ply) then
@@ -33,7 +33,7 @@ local function JackaSpawnHook(ply, transition)
 		end
 	end)
 
-	if JMod.Config.Explosives.BombOwnershipLossOnRespawn then
+	if JMod.Config and JMod.Config.Explosives.BombOwnershipLossOnRespawn then
 		for k, ent in ents.Iterator() do
 			local EZowner = JMod.GetEZowner(ent)
 
@@ -46,34 +46,14 @@ local function JackaSpawnHook(ply, transition)
 			end
 		end
 	end
-	
-	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
-	timer.Simple(1, function()
-		if (IsValid(ply)) then
-			if not(ply.JMod_DidPlayerReclaimItems) then
-				local PlayerTeam = ply:Team()
-				-- this will only run once per player per session
-				local ID, num = ply:SteamID64(), 0
-				for k, v in ents.Iterator() do
-					if (v.EZownerID and v.EZownerID == ID) then
-						local EntLastKnownTeam = v.EZownerTeam or TEAM_UNASSIGNED
-						if (EntLastKnownTeam == PlayerTeam) then
-							JMod.SetEZowner(v, ply)
-							num = num + 1
-						else
-							JMod.SetEZowner(v, game.GetWorld(), true)
-						end
-					end
-				end
-				ply.JMod_DidPlayerReclaimItems = true
-				if (num > 0) then ply:PrintMessage(HUD_PRINTTALK, "JMod: you reclaimed control of " .. num .. " JMod items") end
-			end
-		end
-	end)
 
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)
+
+	if IsValid(ply.JModSpawnPointEntity) and ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply) then
+		ply.JModSpawnPointEntity:PlayerRespawnAt(ply)
+	end
 end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
@@ -84,31 +64,31 @@ hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit)
 		JMod.LuaConfigSync(true, ply)
 		JMod.CraftablesSync(ply) 
 	end)
+	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
+	timer.Simple(1, function()
+		if (IsValid(ply)) then
+			local PlayerTeam = ply:Team()
+			local ID, num = ply:SteamID64(), 0
+			for k, v in ents.Iterator() do
+				if (v.EZownerID and v.EZownerID == ID) then
+					local EntLastKnownTeam = v.EZownerTeam or TEAM_UNASSIGNED
+					if (EntLastKnownTeam == PlayerTeam) then
+						JMod.SetEZowner(v, ply)
+						num = num + 1
+					else
+						JMod.SetEZowner(v, game.GetWorld(), true)
+					end
+				end
+			end
+			if (num > 0) then ply:PrintMessage(HUD_PRINTTALK, "JMod: you reclaimed control of " .. num .. " JMod items") end
+		end
+	end)
 end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, transition) 
 	if transition then return end
-	ply.JModSpawnTime = CurTime()
-	local STATE_ROLLED, STATE_UNROLLED = 0, 1
-	local Sleepingbag = ply.JModSpawnPointEntity
-	if IsValid(Sleepingbag) and (Sleepingbag.State == STATE_UNROLLED) and (IsValid(Sleepingbag.Pod)) then
-		if (Sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
-			Sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
-			if not IsValid(Sleepingbag.Pod:GetDriver()) then --Get inside when respawn
-				ply:SetPos(Sleepingbag:GetPos())
-				Sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
-				net.Start("JMod_VisionBlur")
-					net.WriteFloat(5)
-					net.WriteFloat(2000)
-					net.WriteBit(true)
-				net.Send(ply)
-				Sleepingbag.Pod.EZvehicleEjectPos = nil
-				
-				return Sleepingbag
-			end
-		else
-			JMod.Hint(ply,"sleeping bag wait")
-		end
+	if IsValid(ply.JModSpawnPointEntity) and ply.JModSpawnPointEntity:CanPlayerRespawnAt(ply) then
+		return ply.JModSpawnPointEntity
 	end
 end)
 
@@ -597,8 +577,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 				end
 			end
 
-			if playa.EZbleeding then
-				local Bleed = playa.EZbleeding
+			if playa.EZbleeding and playa.EZbleeding > 0 then
+				local Bleed = math.Clamp(playa.EZbleeding or 0, 0, 9e9)
 
 				if Bleed > 0 then
 					local Amt = JMod.Config.QoL.BleedSpeedMult
@@ -641,7 +621,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 			VirusHostThink(playa)
 
-			if JMod.Config.QoL.Drowning then
+			if JMod.Config and JMod.Config.QoL.Drowning then
+				playa.EZoxygen = playa.EZoxygen or 100
 				if playa:WaterLevel() >= 3 then
 					if (playa.EZarmor and playa.EZarmor.effects.scuba) then
 						playa.EZoxygen = math.Clamp(playa.EZoxygen + 3, 0, 100)
@@ -687,7 +668,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 	---
 	if NextNutritionThink < Time then
-		NextNutritionThink = Time + 10 / JMod.Config.FoodSpecs.DigestSpeed
+		NextNutritionThink = Time + 10 / ((JMod.Config and JMod.Config.FoodSpecs.DigestSpeed) or 1)
 
 		for _, playa in PlyIterator, Playas, startingindex do
 			if playa.EZnutrition then
@@ -1009,7 +990,7 @@ end, nil, "Prints information about what the player's crosshair is looking at.")
 
 concommand.Add("jacky_player_debug", function(ply, cmd, args)
 	if not GetConVar("sv_cheats"):GetBool() then return end
-	if not ply:IsSuperAdmin() then return end
+	if not JMod.IsAdmin(ply) then return end
 
 	--[[local ValidEntNum = 1
 	for k, v in ents.Iterator() do
@@ -1025,9 +1006,29 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 	JMod.DebugArrangeEveryone(ply, args[1] or 1)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
+concommand.Add("jmod_debug_explosivegas", function(ply, cmd, args)
+	if not GetConVar("sv_cheats"):GetBool() then return end
+	if not JMod.IsAdmin(ply) then return end
+
+	local Tr = ply:GetEyeTrace()
+	local SpawnPos = Tr.HitPos + Tr.HitNormal * 20
+
+	for i = 1, 25 do
+		timer.Simple(i / 25, function()
+			if not IsValid(ply) then return end
+			local Gas = ents.Create("ent_jack_gmod_ezexplosivegasparticle")
+			Gas:SetPos(SpawnPos)
+			Gas.CurVel = VectorRand() * math.random(30, 70)
+			JMod.SetEZowner(Gas, ply)
+			Gas:Spawn()
+			Gas:Activate()
+		end)
+	end
+end, nil, "(CHEAT, ADMIN ONLY) Spawns 25 explosive gas particles at aim position.")
+
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 	--local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
-	if JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
+	if JMod.Config and JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
 end)
 
 hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, dmg)
@@ -1046,14 +1047,15 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	local EZcorpse
 	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
-		if IsValid(PlyRagdoll) then
+		if not IsValid(PlyRagdoll) then
+			ShouldJModCorpse = false
+		else
 			if ply.EZoriginalPlayerModel then
 				JMod.SetPlayerModel(ply, ply.EZoriginalPlayerModel)
 				PlyRagdoll:SetModel(ply.EZoriginalPlayerModel)
 			end
 
 			local BodyGroupValues = ""
-						
 			-- Get player's desired bodygroups from client convar
 			local PlayerBodygroups = ply:GetInfo("cl_playerbodygroups")
 			if PlayerBodygroups and PlayerBodygroups ~= "" then
@@ -1080,6 +1082,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 			if ply.EZoverDamage then
 				EZcorpse.EZoverDamage = ply.EZoverDamage
 			end
+			EZcorpse.EZoriginalPlayerModel = ply.EZoriginalPlayerModel
 			EZcorpse.BodyGroupValues = BodyGroupValues
 			EZcorpse:Spawn()
 			EZcorpse:Activate()
@@ -1224,7 +1227,7 @@ hook.Add("GravGunPunt", "JMod_ResetBouyancy", ResetBouyancy)
 hook.Add("OnPlayerPhysicsDrop", "JMod_ResetBouyancy", ResetBouyancy)
 
 hook.Add("OnEntityWaterLevelChanged", "JMod_WaterExtinguish", function(ent, oldLevel, newLevel)
-	if JMod.Config.QoL.ExtinguishUnderwater and (ent.IsOnFire and ent:IsOnFire()) then
+	if JMod.Config and JMod.Config.QoL.ExtinguishUnderwater and (ent.IsOnFire and ent:IsOnFire()) then
 		if (oldLevel == 0) and (newLevel > 0) then
 			sound.Play("snds_jack_gmod/hiss.ogg", ent:GetPos(), 100, math.random(70, 80))--"snds_jack_gmod/hiss.ogg", ent:GetPos(), 100, math.random(90, 110))
 		end

@@ -1,4 +1,4 @@
-﻿--[[
+--[[
 1 axe
 1 bat
 1 bow
@@ -57,6 +57,7 @@ $attachment "shell" "ValveBiped.Bip01_R_Hand" 9.5 -0.7 -5 rotate 30 90 -90
 
 $definebone "ValveBiped.Bip01_R_Hand" "" -0.678304 13.183071 4.586786 10.000006 -89.999982 -179.999978 0 0 0 0 0 0
 --]]
+
 JMod.WeaponTable = {
 	["Assault Rifle"] = {
 		mdl = "models/weapons/w_jmod_m16.mdl",
@@ -271,6 +272,8 @@ JMod.WeaponTable = {
 	}
 }
 
+-- Ammo types are sorted alphabetically by Gmod before ID assignment
+-- This means IDs are consistent as long as names don't change
 JMod.AmmoTable = {
 	["Light Rifle Round"] = {
 		resourcetype = "ammo",
@@ -279,22 +282,18 @@ JMod.AmmoTable = {
 		basedmg = 40,
 		effrange = 100,
 		terminaldmg = 10,
-		penetration = 40,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrr"
+		penetration = 40
 	},
 	["Light Rifle Round-Armor Piercing"] = {
 		armorpiercing = .2,
-		penetration = 70,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrap"
+		penetration = 70
 	},
 	["Light Rifle Round-Ballistic Tip"] = {
 		expanding = .4,
-		penetration = 30,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrbt"
+		penetration = 30
 	},
 	["Light Rifle Round-Tracer"] = {
-		tracer = true,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrt"
+		tracer = true
 	},
 	["Medium Rifle Round"] = {
 		resourcetype = "ammo",
@@ -343,7 +342,7 @@ JMod.AmmoTable = {
 		terminaldmg = 5,
 		penetration = 20
 	},
-    ["Medium Pistol Round"] = {
+	["Medium Pistol Round"] = {
 		resourcetype = "ammo",
 		sizemult = 4,
 		carrylimit = 200,
@@ -413,7 +412,7 @@ JMod.AmmoTable = {
 		carrylimit = 30,
 		ent = "ent_jack_gmod_ezarrow",
 		armorpiercing = .7,
-		basedmg = 75,
+		basedmg = 80,
 		ammoboxEnt = "ent_jack_gmod_ezammobox_a"
 	},
 	["Black Powder Paper Cartridge"] = {
@@ -432,14 +431,14 @@ JMod.AmmoTable = {
 		basedmg = 90,
 		effrange = 100,
 		terminaldmg = 30,
-		penetration = 40,
-		--ammoboxEnt = "ent_jack_gmod_ezammobox_bpmc"
+		penetration = 40
 	}
 }
 
 function JMod.LoadAmmoTable(tbl)
 	for k, v in pairs(tbl) do
 		v.carrylimit = v.carrylimit or -2
+		
 		game.AddAmmoType({
 			name = k,
 			maxcarry = v.carrylimit,
@@ -447,13 +446,7 @@ function JMod.LoadAmmoTable(tbl)
 			plydmg = v.basedmg,
 			dmgtype = v.dmgtype or DMG_BULLET
 		})
-		timer.Simple(2, function()
-			local ammoID = game.GetAmmoID(k)
-			-- Debug: Verify ammo type was registered
-			if ammoID == -1 then
-				print("[JMod WARNING] Failed to register ammo type: " .. tostring(k))
-			end
-		end)
+		
 		if SERVER then
 			timer.Simple(1, function()
 				if (v.resourcetype) and (v.resourcetype == "munitions") then
@@ -492,13 +485,16 @@ function JMod.LoadAmmoTable(tbl)
 				language.Add(v.ammoboxEnt, v.nicename or ("EZ " .. k))
 			end
 		end
+		
+		-- Merge ammo specs into main table for consistency
+		JMod.AmmoTable[k] = v
 	end
 end
 
 -- Dynamically create weapon Ents
 function JMod.GenerateWeaponEntities(tbl)
 	for name, info in pairs(tbl) do
-		if info.noent then continue end
+		if info.noent or not info.ent then continue end
 
 		local WeaponEnt = {}
 		WeaponEnt.Base = info.BaseEnt or "ent_jack_gmod_ezweapon"
@@ -511,51 +507,99 @@ function JMod.GenerateWeaponEntities(tbl)
 		WeaponEnt.AdminOnly = info.AdminOnly or false
 		WeaponEnt.Category = info.Category or "JMod - EZ Weapons"
 		WeaponEnt.WeaponName = name
-		WeaponEnt.ModelScale = info.gayPhysics and nil or info.size -- or math.max(info.siz.x, info.siz.y, info.siz.z)
+		WeaponEnt.ModelScale = info.gayPhysics and nil or info.size
 		scripted_ents.Register(WeaponEnt, info.ent)
 
 		if CLIENT then
 			language.Add(info.ent, name)
 		end
+		
+		-- Merge weapon specs into main table for entity lookup
+		JMod.WeaponTable[name] = info
 	end
 end
 
+-- Utility: List all registered ammo types with their IDs (sorted by name)
+function JMod.ListAmmoTypes()
+	print("=== JMod Ammo Types ===")
+	local sorted = {}
+	for name, _ in pairs(JMod.AmmoTable) do
+		table.insert(sorted, name)
+	end
+	table.sort(sorted)
+	
+	for i, name in ipairs(sorted) do
+		local id = game.GetAmmoID(name)
+		print(string.format("%s (ID: %d)", name, id))
+	end
+end
+
+-- Load base JMod ammo types IMMEDIATELY so weapons can use them
+-- This must happen before weapon files load (which use ApplyAmmoSpecs)
 JMod.LoadAmmoTable(JMod.AmmoTable)
+
+-- Load base weapon entities immediately too
 JMod.GenerateWeaponEntities(JMod.WeaponTable)
 
--- support third-party additions to the jmod ammo/weapons table
-function JMod.LoadAdditionalAmmo()
-	if JMod.AdditionalAmmoTable then
-		table.Merge(JMod.AmmoTable, JMod.AdditionalAmmoTable)
-		JMod.LoadAmmoTable(JMod.AdditionalAmmoTable)
-	end
+JMod.WeaponsInitialized = JMod.WeaponsInitialized or false
+
+if JMod.WeaponsInitialized then
+	-- Trigger hook for addons to register their ammo types
+	hook.Run("JMod_RegisterAmmoTypes")
+	
+	-- Trigger hook for addons to register their weapons
+	hook.Run("JMod_RegisterWeaponEntities")
 end
-hook.Add("Initialize", "JMod_LoadAdditionalAmmo", JMod.LoadAdditionalAmmo)
 
-function JMod.LoadAdditionalWeaponEntities()
-	if JMod.AdditionalWeaponTable then
-		table.Merge(JMod.WeaponTable, JMod.AdditionalWeaponTable)
-		JMod.GenerateWeaponEntities(JMod.AdditionalWeaponTable)
+-- Hook system for ADDONS to register their ammo/weapons in predictable order
+hook.Add("Initialize", "JMod_RegisterAddonContent", function()
+	-- Trigger hook for addons to register their ammo types
+	hook.Run("JMod_RegisterAmmoTypes", JMod.AmmoTable)
+	
+	-- Trigger hook for addons to register their weapons
+	hook.Run("JMod_RegisterWeaponEntities", JMod.WeaponTable)
+	JMod.WeaponsInitialized = true 
+end)
+
+-- Helper to normalize ammo type (ID or name -> name)
+function JMod.NormalizeAmmoType(typ)
+	if isnumber(typ) then
+		return game.GetAmmoName(typ)
 	end
+	return typ
 end
-hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", JMod.LoadAdditionalWeaponEntities)
 
-JMod.LoadAdditionalAmmo()
-JMod.LoadAdditionalWeaponEntities()
-
+-- Get ammo specs - handles both names AND IDs
 function JMod.GetAmmoSpecs(typ)
+	-- Handle numeric ID - convert to name first
+	if isnumber(typ) then
+		typ = game.GetAmmoName(typ)
+		if not typ then return nil end
+	end
+	
+	-- Look up in the ammo table
 	if not JMod.AmmoTable[typ] then return nil end
 	local Result, BaseType = table.FullCopy(JMod.AmmoTable[typ]), string.Split(typ, "-")[1]
-
+	
 	return table.Inherit(Result, JMod.AmmoTable[BaseType])
 end
 
+-- Apply ammo specs - also handles both names AND IDs
 function JMod.ApplyAmmoSpecs(wep, typ, mult)
 	mult = mult or 1
+	
+	-- Normalize to name if it's an ID
+	if isnumber(typ) then
+		typ = game.GetAmmoName(typ)
+	end
+	
 	wep.Primary.Ammo = typ
 	local Specs = JMod.GetAmmoSpecs(typ)
-	if not Specs then print("[JMod] - " ..typ.." is not a registered ammo type") return end
-	timer.Simple(0.1, function() if game.GetAmmoID(typ) == -1 then print("[JMod] - " ..typ.." failed to register") return end end)
+	if not Specs then
+		print("[JMod ERROR] Ammo type '" .. tostring(typ) .. "' is not registered")
+		return
+	end
+	
 	wep.Damage = Specs.basedmg * mult
 	wep.Num = Specs.projnum or 1
 
@@ -587,7 +631,6 @@ function JMod.ApplyAmmoSpecs(wep, typ, mult)
 		wep.EZarmorpiercingAmmo = Specs.armorpiercing
 	end
 
-	-- todo: implement this when we add these types
 	if Specs.tracer then
 		wep.Tracer = Specs.tracer
 	else
@@ -907,10 +950,10 @@ elseif SERVER then
 
 		if isnumber(ent) and game.GetAmmoName(ent) then
 			-- it's an ammo type
-			local MaxAmmo = (game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
+			local MaxAmmo = math.floor(game.GetAmmoMax(ent) * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 			local CurrentAmmo = ply:GetAmmoCount(ent)
 			local SpaceLeftInPlayerInv = MaxAmmo - CurrentAmmo
-			local AmtToGive = math.min(SpaceLeftInPlayerInv, noRemove)
+			local AmtToGive = math.floor(math.min(SpaceLeftInPlayerInv, noRemove))
 
 			if AmtToGive > 0 then
 				ply:GiveAmmo(AmtToGive, ent)
@@ -927,7 +970,7 @@ elseif SERVER then
 
 				--[[ PRIMARY --]]
 				if PrimName then
-					PrimMax = PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult
+					PrimMax = math.floor(PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 					local IsPrimMunitions = IsAmmoOnTable(PrimName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
 					if (IsPrimMunitions == IsMunitionBox) and not(IsAmmoOnTable(PrimName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if PrimSize == -1 then
@@ -938,7 +981,7 @@ elseif SERVER then
 						local SpaceLeftInPlayerInv = PrimMax - CurrentAmmo
 						local AmmoPerResourceUnit = PrimMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
-						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv)
+						local AmtToGive = math.floor(math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv))
 						if (AmtToGive > 0) and (ply:GetAmmoCount(PrimType) < PrimMax) then
 							ply:GiveAmmo(AmtToGive, PrimType)
 							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
@@ -958,7 +1001,7 @@ elseif SERVER then
 				if ent:GetResource() <= 0 then return end
 				--[[ Secondary --]]
 				if SecName then
-					SecMax = SecMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult
+					SecMax = math.floor(SecMax * JMod.Config.Weapons.AmmoCarryLimitMult * ArmorAmmoCarryMult)
 					local IsSecMunitions = IsAmmoOnTable(SecName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
 					if (IsSecMunitions == IsMunitionBox) and not(IsAmmoOnTable(SecName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if SecSize == -1 then
@@ -991,7 +1034,7 @@ elseif SERVER then
 			-- it's a specific ammo box or ammo entity
 			local Typ, CountInBox = ent.EZammo, ent:GetCount()
 			local AmmoInfo, CurrentAmmo = JMod.GetAmmoSpecs(Typ), ply:GetAmmoCount(Typ)
-			local SpaceLeftInPlayerInv = (AmmoInfo.carrylimit * ArmorAmmoCarryMult * JMod.Config.Weapons.AmmoCarryLimitMult) - CurrentAmmo
+			local SpaceLeftInPlayerInv = math.floor((AmmoInfo.carrylimit * ArmorAmmoCarryMult * JMod.Config.Weapons.AmmoCarryLimitMult)) - CurrentAmmo
 			local AmtToGive = math.min(SpaceLeftInPlayerInv, CountInBox)
 
 			if AmtToGive > 0 then

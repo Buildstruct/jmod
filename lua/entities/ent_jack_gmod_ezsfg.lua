@@ -34,7 +34,7 @@ ENT.EZconsumes = {
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
 ENT.EZpowerProducer = true
-ENT.EZpowerSocket = Vector(65, 18, 18)
+ENT.EZpowerSocketPos = Vector(65, 18, 18)
 ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()
@@ -330,11 +330,11 @@ elseif(CLIENT)then
 		local State, Grade = self:GetState(), self:GetGrade()
 		local FT = FrameTime()
 		if State == STATE_ON then
-			self.WheelMomentum = math.Clamp(self.WheelMomentum or 0 + FT / 8, 0, 1)
+			self.WheelMomentum = math.Clamp((self.WheelMomentum or 0) + FT / 8, 0, 1)
 		else
-			self.WheelMomentum = math.Clamp(self.WheelMomentum or 0 - FT / 2, 0, 1)
+			self.WheelMomentum = math.Clamp((self.WheelMomentum or 0) - FT / 2, 0, 1)
 		end
-		self.WheelTurn = self.WheelTurn or 0 - self.WheelMomentum*Grade*FT*300
+		self.WheelTurn = (self.WheelTurn or 0) - self.WheelMomentum*Grade*FT*300
 
 		if self.WheelTurn > 360 then
 			self.WheelTurn = 1
@@ -363,12 +363,13 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		if (State == STATE_ON) then
-				local GlowPos = BasePos + Up * 60 + Forward * -13
-				local GlowAng = SelfAng:GetCopy()
-				local Roll = GlowAng.r
-				GlowAng:RotateAroundAxis(GlowAng:Up(), 180)
-				local GlowDir = GlowAng:Forward()
-				render.SetMaterial(WhiteSquare)
+			local GlowPos = BasePos + Up * 60 + Forward * -13
+			local GlowAng = SelfAng:GetCopy()
+			local Roll = GlowAng.r
+			GlowAng:RotateAroundAxis(GlowAng:Up(), 180)
+			local GlowDir = GlowAng:Forward()
+			render.SetMaterial(WhiteSquare)
+
 			if Closeness > 40000 then
 				render.DrawQuadEasy(GlowPos + GlowDir * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 167, 116, 225), Roll)
 			else
@@ -378,7 +379,7 @@ elseif(CLIENT)then
 				for i = 1, 20 do
 					render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), Roll)
 				end
-				if JMod.Config.QoL.NiceFire then
+				if JMod.Config and JMod.Config.QoL.NiceFire then
 					render.SetMaterial(HeatWaveMat)
 					for i = 1, 2 do
 						--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))

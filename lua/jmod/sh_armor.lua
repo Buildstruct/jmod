@@ -1,4 +1,4 @@
-﻿player_manager.AddValidModel("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_cod.mdl")
+player_manager.AddValidModel("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_cod.mdl")
 player_manager.AddValidHands("JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_v.mdl", 0, "00000000")
 
 -- default armor data
@@ -101,7 +101,7 @@ JMod.ArmorSlotNiceNames = {
 	leftforearm = "Left Forearm"
 }
 
--- only used if JMod.Config.QoL.RealisticLocationalDamage is true
+-- only used if JMod.Config and JMod.Config.QoL.RealisticLocationalDamage is true
 JMod.BodyPartDamageMults = {
 	[HITGROUP_HEAD] = 10,
 	[HITGROUP_CHEST] = 1,
@@ -716,8 +716,8 @@ JMod.ArmorTable = {
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1.05, 1.05, 1),
-		pos = Vector(-4.5, -12, 0),
-		ang = Angle(-85, 0, 90),
+		pos = Vector(-3, -13.5, 0),
+		ang = Angle(-90, 0, 90),
 		wgt = 40,
 		dur = 725,
 		ent = "ent_jack_gmod_ezarmor_mhtorso",
@@ -1113,7 +1113,7 @@ JMod.ArmorTable = {
 -- Dynamically generate armor ents
 function JMod.GenerateArmorEntities(tbl)
 	for class, info in pairs(tbl) do
-		if info.noent then continue end
+		if info.noent or not info.ent then continue end
 		local armorent = {}
 		armorent.Base = "ent_jack_gmod_ezarmor"
 		armorent.PrintName = info.PrintName or class
@@ -1141,6 +1141,8 @@ local function LoadAdditionalArmor()
 end
 
 hook.Add("Initialize", "JMod_LoadAdditionalArmor", LoadAdditionalArmor)
+
+--LoadAdditionalArmor()
 
 -- support third-party integration of gas-based weapons
 function JMod.GetArmorBiologicalResistance(ply, typ)
@@ -1318,8 +1320,6 @@ if CLIENT then
 
 	end, "First argument is action, second arg is slot to apply the action to. \nOtherwise it applies the action to all slots")
 end
-
---LoadAdditionalArmor()
 
 -- Sounds
 sound.Add({	name = "JMod_ZipLine_Clip",

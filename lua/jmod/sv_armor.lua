@@ -1,4 +1,4 @@
-﻿local EquipSounds = {"snds_jack_gmod/equip1.ogg", "snds_jack_gmod/equip2.ogg", "snds_jack_gmod/equip3.ogg", "snds_jack_gmod/equip4.ogg", "snds_jack_gmod/equip5.ogg"}
+local EquipSounds = {"snds_jack_gmod/equip1.ogg", "snds_jack_gmod/equip2.ogg", "snds_jack_gmod/equip3.ogg", "snds_jack_gmod/equip4.ogg", "snds_jack_gmod/equip5.ogg"}
 
 local function IsDamageThisType(dmg, typ)
 	if type(typ) ~= "number" then return false end
@@ -281,7 +281,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 
 		-- if there's no armor on the struck bodypart
 		if NoProtection then 
-			if JMod.Config.QoL.RealisticLocationalDamage then
+			if JMod.Config and JMod.Config.QoL.RealisticLocationalDamage then
 				Mul = Mul * JMod.BodyPartDamageMults[hitgroup]
 			end
 		else
@@ -292,7 +292,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 			JMod.CalcSpeed(ply)
 			JMod.EZarmorSync(ply)
 		end
-	elseif JMod.Config.QoL.RealisticLocationalDamage then
+	elseif JMod.Config and JMod.Config.QoL.RealisticLocationalDamage then
 		Mul = Mul * (JMod.BodyPartDamageMults[hitgroup] or 1) * AmmoHPmul
 	else
 		Mul = Mul * AmmoHPmul
@@ -378,7 +378,7 @@ hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 				FullBodyDmgHandling(victim, dmginfo, true, IsInSewage)
 			end
 
-			if JMod.Config.QoL.BleedDmgMult > 0 and IsPiercingDmg then
+			if JMod.Config and JMod.Config.QoL.BleedDmgMult > 0 and IsPiercingDmg then
 				timer.Simple(0, function()
 					local NewHelf = victim:Health()
 					local HelfLoss = Helf - NewHelf

@@ -22,7 +22,7 @@ ENT.RocketDisplaySpecs = {
 	["ent_jack_gmod_ezfirework"] = {
 		mdl = "models/jmod/explosives/ez_fireworks.mdl",
 		siz = 1.1,
-		pos = Vector(0, 25, 0),
+		pos = Vector(0, -25, 0),
 		ang = Angle(-90, 0, 0),
 		mat = 1,
 		bg = { [1] = 1 } -- todo
@@ -42,7 +42,57 @@ ENT.RocketDisplaySpecs = {
 		mat = 1
 	}
 }
+ENT.LaserPointStartPos = Vector(35, 0, 0)
+ENT.TargetPositionOverride = nil
 ---
+local ColorRed = Color(255, 0, 0, 100)
+local ColorWhite = Color(255, 255, 255, 100)
+local BeamMat, GlowMat = nil, nil
+if CLIENT then
+	BeamMat = CreateMaterial("xeno/beamgauss", "UnlitGeneric", {
+		["$basetexture"] = "sprites/spotlight",
+		["$additive"] = "1",
+		["$vertexcolor"] = "1",
+		["$vertexalpha"] = "1",
+	})
+	GlowMat = Material("sprites/mat_jack_basicglow")
+
+	CreateTemporaryLaser = function(self, old, new)
+		local RenderHookName = "JMOD_ROCKETPOD_RENDER_LaserPointPos_" .. self:EntIndex()
+		self.NextLaserRenderTime = CurTime() + 1
+		hook.Add("PostDrawTranslucentRenderables", RenderHookName, function()
+			if not IsValid(self) then 
+				hook.Remove("PostDrawTranslucentRenderables", RenderHookName)
+
+				return 
+			end
+			local StartPos = self:LocalToWorld(self.LaserPointStartPos)
+			local EndPos = self:GetLaserPointPos()
+			local trace = util.QuickTrace(StartPos, EndPos - StartPos, self)
+			local EyeDir = (EyePos() - trace.HitPos):GetNormalized()
+			local SurfaceDot = EyeDir:Dot(trace.HitNormal)
+			render.SetMaterial(BeamMat)
+			render.DrawBeam(StartPos, trace.HitPos, 0.5, 0, 255, ColorRed)
+			render.DrawBeam(StartPos, trace.HitPos, 0.25, 0, 255, ColorWhite)
+			render.SetMaterial(GlowMat)
+			render.DrawQuadEasy(trace.HitPos + EyeDir * 8 * SurfaceDot, EyeDir, 15, 15, ColorRed, 0)
+			render.DrawQuadEasy(trace.HitPos + EyeDir * 4 * SurfaceDot, EyeDir, 7, 7, ColorWhite, 0)
+			render.DrawSprite(trace.HitPos + EyeDir * 8 * SurfaceDot, 8, 8, ColorRed)
+			render.DrawSprite(trace.HitPos + EyeDir * 4 * SurfaceDot, 4, 4, ColorWhite)
+			if CurTime() > self.NextLaserRenderTime then
+				hook.Remove("PostDrawTranslucentRenderables", RenderHookName)
+			end
+		end)
+	end
+else
+	CreateTemporaryLaser = function() end
+end
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Vector", 0, "LaserPointPos")
+	self:NetworkVarNotify("LaserPointPos", CreateTemporaryLaser)
+end
+
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
@@ -79,8 +129,8 @@ if SERVER then
 		self.Rockets = self.Rockets or {}
 		---
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Launch [NORMAL]", "Unload [NORMAL]"}, {"Fires the specified rocket, input -1 to fire them all", "Unloads rocket"})
-			self.Outputs = WireLib.CreateOutputs(self, {"LastRocket [STRING]", "Amount [NORMAL]"}, {"The last loaded rocket", "How many rockets are contained in the launcher"})
+			self.Inputs = WireLib.CreateInputs(self, {"Launch [NORMAL]", "Unload [NORMAL]", "TargetPos [VECTOR]", "TargetEntity [ENTITY]"}, {"Fires the specified rocket, input -1 to fire them all", "Unloads rocket", "Target position for unguided rockets", "Target entity for missiles"})
+			self.Outputs = WireLib.CreateOutputs(self, {"NextRocket [STRING]", "Amount [NORMAL]"}, {"The next rocket that will fire", "How many rockets are contained in the launcher"})
 		end
 	end
 
@@ -97,29 +147,39 @@ if SERVER then
 
 	function ENT:TriggerInput(iname, value)
 		local NumRockets = #self.Rockets
-		if iname == "Launch" and value > 0 then
-			self:LaunchRocket(value, true)
-		elseif iname == "Launch" and value == -1 then
-			if NumRockets > 0 then
-				for i = 0, NumRockets do
-					timer.Simple(.6 * i, function()
-						if IsValid(self) then
-							self:LaunchRocket(NumRockets - i, true)
-						end
-					end)
+		if iname == "Launch" then
+			if value > 0 then
+				self:LaunchRocket(value, true)
+			elseif value == -1 then
+				if NumRockets > 0 then
+					for i = 0, NumRockets do
+						timer.Simple(.6 * i, function()
+							if IsValid(self) then
+								self:LaunchRocket(NumRockets - i, true)
+							end
+						end)
+					end
 				end
 			end
-		elseif iname == "Unload" and value > 0 then
-			self:LaunchRocket(value, false)
-		elseif iname == "Unload" and value == -1 then
-			if NumRockets > 0 then
-				for i = 1, NumRockets do
-					timer.Simple(.2 * i, function()
-						if IsValid(self) then
-							self:LaunchRocket(i, false)
-						end
-					end)
+		elseif iname == "Unload" then
+			if value > 0 then
+				self:LaunchRocket(value, false)
+			elseif value == - 1 then
+				if NumRockets > 0 then
+					for i = 1, NumRockets do
+						timer.Simple(.2 * i, function()
+							if IsValid(self) then
+								self:LaunchRocket(i, false)
+							end
+						end)
+					end
 				end
+			end
+		elseif iname == "TargetPos" then
+			if value == Vector(0, 0, 0) then
+				self.TargetPositionOverride = nil
+			else
+				self.TargetPositionOverride = value
 			end
 		end
 	end
@@ -173,9 +233,10 @@ if SERVER then
 	end
 
 	function ENT:LaunchRocket(slotNum, arm, ply)
+		if arm == nil then arm = true end
 		local Time = CurTime()
 		if self.NextLaunchTime and (self.NextLaunchTime > Time) then return end
-		self.NextLaunchTime = Time + .1
+		self.NextLaunchTime = Time + .25
 		local NumORockets = #self.Rockets
 		slotNum = slotNum or NumORockets
 		if NumORockets <= 0 then return end
@@ -191,11 +252,32 @@ if SERVER then
 		PodAngle:RotateAroundAxis(Ford, -60 * (slotNum - 1))
 		PodAngle:RotateAroundAxis(PodAngle:Right(), -LaunchedRocket.JModPreferredCarryAngles.p)
 		PodAngle:RotateAroundAxis(PodAngle:Up(), LaunchedRocket.JModPreferredCarryAngles.y)
-		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 60)
+		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 100)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
+		LaunchedRocket.EZlauncher = self
+
+		local TargetPos = self.TargetPositionOverride
+		if IsValid(ply) then
+			local filter = {ply}
+			local Veh = ply:GetVehicle()
+			if IsValid(Veh) then table.insert(filter, Veh) table.insert(filter, Veh:GetParent()) end
+			local plyTrace = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50000, filter)
+			if plyTrace.Hit then
+				-- Check if player trace hitpos is within a cone of our forward vector
+				local diff = plyTrace.HitPos - self:GetPos()
+				local dot = Ford:Dot(diff:GetNormalized())
+				if dot > 0.9 then
+					TargetPos = plyTrace.HitPos
+				end
+			end
+		end
+		if TargetPos then
+			LaunchedRocket.TargetPosition = TargetPos
+			self:SetLaserPointPos(TargetPos)
+		end
 
 		local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0, true)
 		timer.Simple(1, function()
@@ -211,6 +293,11 @@ if SERVER then
 				if arm then
 					LaunchedRocket.DropOwner = self
 					LaunchedRocket:SetState(1)
+					timer.Simple(0, function()
+						if IsValid(LaunchedRocket) and isfunction(LaunchedRocket.Launch) then
+							LaunchedRocket:Launch(ply)
+						end
+					end)
 					if LaunchedRocket.Launch then
 						LaunchedRocket:Launch(ply)
 					end
@@ -252,7 +339,7 @@ if SERVER then
 		local NumRockets = #self.Rockets
 		if NumRockets > 0 then
 			for i = 0, NumRockets do
-				timer.Simple(0.11 * i, function()
+				timer.Simple(0.6 * i, function()
 					if IsValid(self) then
 						self:LaunchRocket(NumRockets - i, false, self.EZowner)
 					end
@@ -260,7 +347,7 @@ if SERVER then
 			end
 		end
 
-		timer.Simple(2, function()
+		timer.Simple(5, function()
 			SafeRemoveEntity(self)
 		end)
 	end

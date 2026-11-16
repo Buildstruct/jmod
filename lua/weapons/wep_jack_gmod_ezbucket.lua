@@ -243,15 +243,16 @@ function SWEP:OnDrop()
 	Bucket:Spawn()
 	Bucket:Activate()
 
-	Bucket:SetWater(self:GetWater())
+		Bucket:SetWater(self:GetWater())
 
-	local Phys = Bucket:GetPhysicsObject()
+		local Phys = Bucket:GetPhysicsObject()
 
-	if Phys then
-		Bucket:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
-	end
+		if Phys then
+			Bucket:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+		end
 
-	self:Remove()
+		self:Remove()
+	end)
 end
 
 function SWEP:OnRemove()
