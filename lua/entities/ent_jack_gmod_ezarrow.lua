@@ -35,10 +35,10 @@ if SERVER then
 		self:SetTrigger(true)
 		self.DieTime = CurTime() + 120
 		self.TrailEff = util.SpriteTrail(self, 1, Color(255, 255, 255), false, 2, 0.1, 0.2, 1 / ( 2 + 0.1 ) * 0.5, "trails/plasma")
-		if self.Owner then
+		if self:GetOwner() then
 			local filter = RecipientFilter()
 			filter:AddAllPlayers()
-			filter:RemovePlayer(self.Owner)
+			filter:RemovePlayer(self:GetOwner())
 			self.TrailEff:SetPreventTransmit(filter, true)
 		end
 	end
@@ -46,7 +46,7 @@ if SERVER then
 	function ENT:Impact(tr)
 		if self.Impacted then return end
 		self.Impacted = true
-		local SelfPos, Att, Dir = (tr and tr.HitPos + tr.HitNormal * 5) or self:GetPos() + Vector(0, 0, 30), self.Owner or self, self.CurVel:GetNormalized()
+		local SelfPos, Att, Dir = (tr and tr.HitPos + tr.HitNormal * 5) or self:GetPos() + Vector(0, 0, 30), self:GetOwner() or self, self.CurVel:GetNormalized()
 
 		self:FireBullets({
 			Damage = self.Damage * .66,
@@ -56,14 +56,14 @@ if SERVER then
 			Spread = Vector(0, 0, 0),
 			Src = self:GetPos(),
 			Dir = Dir,
-			Attacker = self.Owner or game.GetWorld(),
+			Attacker = self:GetOwner() or game.GetWorld(),
 			AmmoType = self.AmmoType
 		})
 
 		local Slash = DamageInfo()
 		Slash:SetDamagePosition(tr.HitPos)
 		Slash:SetDamageType(DMG_SLASH)
-		Slash:SetAttacker(self.Owner or game.GetWorld())
+		Slash:SetAttacker(self:GetOwner() or game.GetWorld())
 		Slash:SetInflictor(self)
 		Slash:SetDamageForce(Dir * self.Damage * .33)
 		Slash:SetDamage(self.Damage * .33)
@@ -167,7 +167,7 @@ if SERVER then
 		else
 			local Filter = {self}
 
-			table.insert(Filter, self.Owner)
+			table.insert(Filter, self:GetOwner())
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel*DeltaTime,filter=Filter})
 			local Mask = MASK_SHOT
 
@@ -210,7 +210,7 @@ if SERVER then
 	end
 
 	function ENT:DropToGround(entToIgnore)
-		local filterTab = {self, self.Owner, self.StuckIn}
+		local filterTab = {self, self:GetOwner(), self.StuckIn}
 		if entToIgnore then table.insert(filterTab, entToIgnore) end
 		local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -600), filterTab)
 

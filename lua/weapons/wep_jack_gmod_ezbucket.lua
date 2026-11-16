@@ -97,7 +97,7 @@ local Downness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+	if (self:GetOwner():KeyDown(IN_SPEED)) or (self:GetOwner():KeyDown(IN_ZOOM)) then
 		Downness = Lerp(FT * 2, Downness, 10)
 	else
 		Downness = Lerp(FT * 2, Downness, 0)
@@ -115,7 +115,7 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:UpdateNextIdle()
-	local vm = self.Owner:GetViewModel()
+	local vm = self:GetOwner():GetViewModel()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
@@ -143,18 +143,18 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 end
 
 function SWEP:PrimaryAttack()
-	if self.Owner:KeyDown(IN_SPEED) then return end
+	if self:GetOwner():KeyDown(IN_SPEED) then return end
 	self:Pawnch()
 	self:SetNextPrimaryFire(CurTime() + 1.5)
 	self:SetNextSecondaryFire(CurTime() + 1.5)
 
 	if SERVER then
-		local ShootPos = self.Owner:GetShootPos()
+		local ShootPos = self:GetOwner():GetShootPos()
 		local WaterTr = util.TraceLine({
 			start = ShootPos,
-			endpos = ShootPos + self.Owner:GetAimVector() * 60,
+			endpos = ShootPos + self:GetOwner():GetAimVector() * 60,
 			mask = MASK_WATER+MASK_SOLID,
-			filter = self.Owner
+			filter = self:GetOwner()
 		})
 		if WaterTr.Hit then
 			--jprint(bit.band(util.PointContents(WaterTr.HitPos + Vector(0, 0, -2)), CONTENTS_WATER))
@@ -179,7 +179,7 @@ end
 
 
 function SWEP:Msg(msg)
-	self.Owner:PrintMessage(HUD_PRINTCENTER, msg)
+	self:GetOwner():PrintMessage(HUD_PRINTCENTER, msg)
 end
 
 --,"fists_uppercut"} -- the uppercut looks so bad
@@ -187,8 +187,8 @@ end
 
 function SWEP:Pawnch(sequence)
 	sequence = sequence or "fists_right"
-	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	local vm = self.Owner:GetViewModel()
+	self:GetOwner():SetAnimation(PLAYER_ATTACK1)
+	local vm = self:GetOwner():GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence(sequence))
 	self:UpdateNextIdle()
 end
@@ -208,7 +208,7 @@ function SWEP:SecondaryAttack()
 	if SERVER then
 		local Water = self:GetWater()
 		if Water > 0 then
-			local SpawnTr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 60, self.Owner)
+			local SpawnTr = util.QuickTrace(self:GetOwner():GetShootPos(), self:GetOwner():GetAimVector() * 60, self:GetOwner())
 			if IsValid(SpawnTr.Entity) and SpawnTr.Entity:IsOnFire() then
 				self:SetWater(Water - math.random(2, 3))
 				SpawnTr.Entity:Extinguish()
@@ -220,7 +220,7 @@ function SWEP:SecondaryAttack()
 					sound.Play("snds_jack_gmod/liquid_load.ogg", SpawnTr.HitPos, 90, math.random(90, 110), 1)
 				end
 			else
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WATER, Water, self:WorldToLocal(SpawnTr.HitPos), SpawnTr.Normal:Angle(), self:WorldToLocal(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 10))
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WATER, Water, self:WorldToLocal(SpawnTr.HitPos), SpawnTr.Normal:Angle(), self:WorldToLocal(self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * 10))
 				self:SetWater(0)
 				sound.Play("snds_jack_gmod/liquid_load.ogg", SpawnTr.HitPos, 90, math.random(90, 110), 1)
 			end
@@ -257,8 +257,8 @@ end
 function SWEP:OnRemove()
 	self:SCKHolster()
 
-	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
-		local vm = self.Owner:GetViewModel()
+	if IsValid(self:GetOwner()) and CLIENT and self:GetOwner():IsPlayer() then
+		local vm = self:GetOwner():GetViewModel()
 
 		if IsValid(vm) then
 			vm:SetMaterial("")
@@ -291,8 +291,8 @@ function SWEP:Holster(wep)
 	-- Not calling OnRemove to keep the models
 	self:SCKHolster()
 
-	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
-		local vm = self.Owner:GetViewModel()
+	if IsValid(self:GetOwner()) and CLIENT and self:GetOwner():IsPlayer() then
+		local vm = self:GetOwner():GetViewModel()
 
 		if IsValid(vm) then
 			vm:SetMaterial("")
@@ -303,8 +303,8 @@ function SWEP:Holster(wep)
 end
 
 function SWEP:Deploy()
-	if not IsValid(self.Owner) then return end
-	local vm = self.Owner:GetViewModel()
+	if not IsValid(self:GetOwner()) then return end
+	local vm = self:GetOwner():GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))
@@ -313,7 +313,7 @@ function SWEP:Deploy()
 	end
 
 	if SERVER then
-		JMod.Hint(self.Owner, "building")
+		JMod.Hint(self:GetOwner(), "building")
 	end
 
 	self:SetNextPrimaryFire(CurTime() + 1)
@@ -326,11 +326,11 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 	local Ent = ents.Create(JMod.EZ_RESOURCE_ENTITIES[typ])
 	Ent:SetPos(pos)
 	Ent:SetAngles(AngleRand())
-	Ent:SetCreator(self.Owner)
+	Ent:SetCreator(self:GetOwner())
 	Ent:Spawn()
 	Ent:Activate()
 	Ent:SetEZsupplies(Ent.EZsupplies, amt)
-	JMod.SetEZowner(Ent, self.Owner)
+	JMod.SetEZowner(Ent, self:GetOwner())
 	timer.Simple(.1, function()
 		if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 
 			Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) --- This is so jank
@@ -340,7 +340,7 @@ end
 
 function SWEP:Think()
 	local Time = CurTime()
-	local vm = self.Owner:GetViewModel()
+	local vm = self:GetOwner():GetViewModel()
 	local idletime = self.NextIdle
 
 	if idletime > 0 and Time > idletime then
@@ -348,12 +348,12 @@ function SWEP:Think()
 		self:UpdateNextIdle()
 	end
 
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+	if (self:GetOwner():KeyDown(IN_SPEED)) or (self:GetOwner():KeyDown(IN_ZOOM)) then
 		self:SetHoldType("normal")
 	else
 		self:SetHoldType("fist")
 
-		if self.Owner:KeyDown(IN_ATTACK2) then
+		if self:GetOwner():KeyDown(IN_ATTACK2) then
 			if self.NextTaskProgress < Time then
 				self.NextTaskProgress = Time + .6
 				
@@ -368,7 +368,7 @@ local LastProg = 0
 
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
-	local Ply = self.Owner
+	local Ply = self:GetOwner()
 	if Ply:ShouldDrawLocalPlayer() then return end
 	local W, H, Build = ScrW(), ScrH(), self:GetSelectedBuild()
 
@@ -385,8 +385,8 @@ end
 
 ----------------- sck -------------------
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.Owner) then
-		local vm = self.Owner:GetViewModel()
+	if CLIENT and IsValid(self:GetOwner()) then
+		local vm = self:GetOwner():GetViewModel()
 
 		if IsValid(vm) then
 			self:ResetBonePositions(vm)
@@ -404,8 +404,8 @@ function SWEP:SCKInitialize()
 		self:CreateModels(self.WElements) -- create worldmodels
 
 		-- init view model bone build function
-		if IsValid(self.Owner) then
-			local vm = self.Owner:GetViewModel()
+		if IsValid(self:GetOwner()) then
+			local vm = self:GetOwner():GetViewModel()
 
 			if IsValid(vm) then
 				self:ResetBonePositions(vm)
@@ -431,7 +431,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 
 	function SWEP:SCKViewModelDrawn()
-		local vm = self.Owner:GetViewModel()
+		local vm = self:GetOwner():GetViewModel()
 		if not IsValid(vm) then return end
 		if not self.VElements then return end
 		self:UpdateBonePositions(vm)
@@ -545,8 +545,8 @@ if CLIENT then
 
 		local bone_ent
 
-		if IsValid(self.Owner) then
-			bone_ent = self.Owner
+		if IsValid(self:GetOwner()) then
+			bone_ent = self:GetOwner()
 		else
 			-- when the weapon is dropped
 			bone_ent = self
@@ -655,7 +655,7 @@ if CLIENT then
 				pos, ang = m:GetTranslation(), m:GetAngles()
 			end
 
-			if IsValid(self.Owner) and self.Owner:IsPlayer() and ent == self.Owner:GetViewModel() and self.ViewModelFlip then
+			if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and ent == self:GetOwner():GetViewModel() and self.ViewModelFlip then
 				ang.r = -ang.r -- Fixes mirrored models
 			end
 		end

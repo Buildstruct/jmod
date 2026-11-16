@@ -189,7 +189,7 @@ end
 
 function SWEP:Think()
 	local Time = CurTime()
-	local vm = self.Owner:GetViewModel()
+	local vm = self:GetOwner():GetViewModel()
 	local idletime = self:GetNextIdle()
 	local Swing = self:GetSwinging()
 	local Owner = self:GetOwner()
@@ -260,7 +260,7 @@ function SWEP:Think()
 								sound.Play(BodySound, tr.HitPos, 10, math.random(75, 100), 1)
 							end
 							tr.Entity:SetGroundEntity(NULL)
-							tr.Entity:SetVelocity(self.Owner:GetAimVector() * self.HitPushback)
+							tr.Entity:SetVelocity(self:GetOwner():GetAimVector() * self.HitPushback)
 							--
 							if self.SetTaskProgress then self:SetTaskProgress(0) end
 							--
@@ -310,7 +310,7 @@ function SWEP:TryBustDoor(ent, dmg, pos)
 	-- Magic number: 119.506 is the size of door01_left
 	-- The bigger the door is, the harder it is to bust
 	local threshold = ((ArccWDoorBust and GetConVar("arccw_doorbust_threshold"):GetInt()) or 1) * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
-	JMod.Hint(self.Owner, "shotgun breach")
+	JMod.Hint(self:GetOwner(), "shotgun breach")
 	local WorkSpread = JMod.CalcWorkSpreadMult(ent, pos) ^ 1.1
 	local Amt = dmg * self.DoorBreachPower * WorkSpread
 	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
@@ -330,7 +330,7 @@ function SWEP:TryBustDoor(ent, dmg, pos)
 end
 
 function SWEP:Msg(msg)
-	self.Owner:PrintMessage(HUD_PRINTCENTER, msg)
+	self:GetOwner():PrintMessage(HUD_PRINTCENTER, msg)
 end
 
 function SWEP:UpdateNextIdle()
@@ -370,8 +370,8 @@ function SWEP:Holster(wep)
 	-- Not calling OnRemove to keep the models
 	self:SCKHolster()
 
-	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
-		local vm = self.Owner:GetViewModel()
+	if IsValid(self:GetOwner()) and CLIENT and self:GetOwner():IsPlayer() then
+		local vm = self:GetOwner():GetViewModel()
 
 		if IsValid(vm) then
 			vm:SetMaterial("")
@@ -382,8 +382,8 @@ function SWEP:Holster(wep)
 end
 
 function SWEP:Deploy()
-	if not IsValid(self.Owner) then return end
-	local vm = self.Owner:GetViewModel()
+	if not IsValid(self:GetOwner()) then return end
+	local vm = self:GetOwner():GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
 		self:SendVMSequence("draw")
@@ -416,7 +416,7 @@ local Downness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if (self.SprintCancel and self.Owner:KeyDown(IN_SPEED)) or self.Owner:KeyDown(IN_ZOOM) then
+	if (self.SprintCancel and self:GetOwner():KeyDown(IN_SPEED)) or self:GetOwner():KeyDown(IN_ZOOM) then
 		Downness = Lerp(FT * 2, Downness, 5)
 	elseif (self:GetSwinging()) then
 		Downness = Lerp(FT * 2, Downness, self.SwingVisualLowerAmount)
@@ -431,15 +431,15 @@ end--]]
 
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
-	local Ply = self.Owner
+	local Ply = self:GetOwner()
 	if Ply:ShouldDrawLocalPlayer() then return end
 end
 
 function SWEP:OnRemove()
 	self:SCKHolster()
 
-	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
-		local vm = self.Owner:GetViewModel()
+	if IsValid(self:GetOwner()) and CLIENT and self:GetOwner():IsPlayer() then
+		local vm = self:GetOwner():GetViewModel()
 
 		if IsValid(vm) then
 			vm:SetMaterial("")
@@ -470,8 +470,8 @@ end
 
 ----------------- sck -------------------
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.Owner) then
-		local vm = self.Owner:GetViewModel()
+	if CLIENT and IsValid(self:GetOwner()) then
+		local vm = self:GetOwner():GetViewModel()
 
 		if IsValid(vm) then
 			self:ResetBonePositions(vm)
@@ -489,8 +489,8 @@ function SWEP:SCKInitialize()
 		self:CreateModels(self.WElements) -- create worldmodels
 
 		-- init view model bone build function
-		if IsValid(self.Owner) then
-			local vm = self.Owner:GetViewModel()
+		if IsValid(self:GetOwner()) then
+			local vm = self:GetOwner():GetViewModel()
 			if not IsValid(vm) then return end
 
 			self:ResetBonePositions(vm)
@@ -513,7 +513,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 
 	function SWEP:SCKViewModelDrawn()
-		local vm = self.Owner:GetViewModel()
+		local vm = self:GetOwner():GetViewModel()
 		if not IsValid(vm) then return end
 		if not self.VElements then return end
 		self:UpdateBonePositions(vm)
@@ -627,8 +627,8 @@ if CLIENT then
 
 		local bone_ent
 
-		if IsValid(self.Owner) then
-			bone_ent = self.Owner
+		if IsValid(self:GetOwner()) then
+			bone_ent = self:GetOwner()
 		else
 			-- when the weapon is dropped
 			bone_ent = self
@@ -737,7 +737,7 @@ if CLIENT then
 				pos, ang = m:GetTranslation(), m:GetAngles()
 			end
 
-			if IsValid(self.Owner) and self.Owner:IsPlayer() and ent == self.Owner:GetViewModel() and self.ViewModelFlip then
+			if IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() and ent == self:GetOwner():GetViewModel() and self.ViewModelFlip then
 				ang.r = -ang.r -- Fixes mirrored models
 			end
 		end

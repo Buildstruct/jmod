@@ -189,10 +189,10 @@ if(SERVER)then
 				FuelHazard:SetOwner(JMod.GetEZowner(self))
 				FuelHazard.HighVisuals = (math.random(1, 2) == 1)
 				FuelHazard.SpeedMul = 0.01
-				FuelHazard.Creator = self.Owner
+				FuelHazard.Creator = self:GetOwner()
 				FuelHazard.Burnin = false
 				FuelHazard.LifeTime = math.random(1, 3)
-				JMod.SetEZowner(Flame, self.Owner)
+				JMod.SetEZowner(Flame, self:GetOwner())
 				FuelHazard:Spawn()
 				FuelHazard:Activate()
 				debugoverlay.Cross(self:GetPos() + self:GetForward() * 50 + self:GetUp() * 50, 10, 2, Color(255, 0, 0), true)

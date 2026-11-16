@@ -106,7 +106,7 @@ function SWEP:OnHit(swingProgress, tr)
 
 	if IsValid(tr.Entity) then
 		local PickDam = DamageInfo()
-		PickDam:SetAttacker(self.Owner)
+		PickDam:SetAttacker(self:GetOwner())
 		PickDam:SetInflictor(self)
 		PickDam:SetDamagePosition(StrikePos)
 		PickDam:SetDamageType(DMG_SLASH)
@@ -115,7 +115,7 @@ function SWEP:OnHit(swingProgress, tr)
 		tr.Entity:TakeDamageInfo(PickDam)
 
 	elseif tr.Entity:IsWorld() then
-		local Message = JMod.EZprogressMining(self, tr.HitPos, self.Owner, JMod.GetPlayerStrength(self.Owner) ^ .25)
+		local Message = JMod.EZprogressMining(self, tr.HitPos, self:GetOwner(), JMod.GetPlayerStrength(self:GetOwner()) ^ .25)
 
 		if Message then
 			self:Msg(Message)
@@ -148,7 +148,7 @@ function SWEP:OnHit(swingProgress, tr)
 		end
 	else
 		sound.Play("Canister.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
-		JMod.Hint(self.Owner, "prospecting")
+		JMod.Hint(self:GetOwner(), "prospecting")
 	end
 end
 
@@ -164,8 +164,8 @@ end
 --[[local Anims = {"misscenter1", "hitcenter1"}
 
 function SWEP:Pawnch(hit)
-	self.Owner:SetAnimation(PLAYER_ATTACK1)
-	local vm = self.Owner:GetViewModel()
+	self:GetOwner():SetAnimation(PLAYER_ATTACK1)
+	local vm = self:GetOwner():GetViewModel()
 	if hit then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("hitcenter1"))
 	else
@@ -180,7 +180,7 @@ if CLIENT then
 
 	function SWEP:DrawHUD()
 		if GetConVar("cl_drawhud"):GetBool() == false then return end
-		local Ply = self.Owner
+		local Ply = self:GetOwner()
 		if Ply:ShouldDrawLocalPlayer() then return end
 		local W, H = ScrW(), ScrH()
 

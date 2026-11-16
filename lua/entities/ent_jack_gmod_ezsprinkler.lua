@@ -384,7 +384,7 @@ if(SERVER)then
 						Flame.LifeTime = math.random(2, 3)
 						Flame.Creator = self
 						Flame.Burnin = true
-						JMod.SetEZowner(Flame, self.Owner)
+						JMod.SetEZowner(Flame, self:GetOwner())
 						Flame:Spawn()
 						Flame:Activate()
 					end

@@ -102,7 +102,7 @@ function SWEP:OnHit(swingProgress, tr)
 
 	if IsValid(tr.Entity) then
 		local PickDam = DamageInfo()
-		PickDam:SetAttacker(self.Owner)
+		PickDam:SetAttacker(self:GetOwner())
 		PickDam:SetInflictor(self)
 		PickDam:SetDamagePosition(StrikePos)
 		PickDam:SetDamageType(DMG_CLUB)
@@ -112,7 +112,7 @@ function SWEP:OnHit(swingProgress, tr)
 	end
 
 	if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
-		tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
+		tr.Entity:SetVelocity( self:GetOwner():GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 		self:SetTaskProgress(0)
 		if tr.Entity.IsEZcorpse and IsValid(tr.Entity.EZcorpseEntity) then
 			tr.Entity.EZcorpseEntity:Bury()
@@ -122,7 +122,7 @@ function SWEP:OnHit(swingProgress, tr)
 		local SandTypeModifier = JMod.SandTypes[SurfaceMat]
 		
 		-- Let the mining function handle everything: deposits, sand, or nothing
-		local Message = JMod.EZprogressMining(self, tr.HitPos, self.Owner, (JMod.GetPlayerStrength(self.Owner) ^ 1.5) * (SandTypeModifier or 1), SurfaceMat)
+		local Message = JMod.EZprogressMining(self, tr.HitPos, self:GetOwner(), (JMod.GetPlayerStrength(self:GetOwner()) ^ 1.5) * (SandTypeModifier or 1), SurfaceMat)
 
 		if Message then
 			self:Msg(Message)
@@ -171,7 +171,7 @@ if CLIENT then
 
 	function SWEP:DrawHUD()
 		if GetConVar("cl_drawhud"):GetBool() == false then return end
-		local Ply = self.Owner
+		local Ply = self:GetOwner()
 		if Ply:ShouldDrawLocalPlayer() then return end
 		local W, H = ScrW(), ScrH()
 
