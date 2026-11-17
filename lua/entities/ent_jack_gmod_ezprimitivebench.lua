@@ -36,7 +36,7 @@ ENT.StaticPerfSpecs={
 	MaxDurability = 80,
 	Armor = 1
 }
-ENT.ResourceReqMult = 1.3
+ENT.ResourceReqMult = 2.6
 ENT.BackupRecipe = {
 	[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, 
 	[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15, 
@@ -305,7 +305,7 @@ if(SERVER)then
 
 		timer.Simple(0.1, function()
 			if not IsValid(ent) then return end
-			local Yield, Message = JMod.GetSalvageYield(ent)
+			local Yield = JMod.GetSalvageYield(ent)
 
 			if #table.GetKeys(Yield) <= 0 then
 				--

@@ -800,7 +800,7 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 	if Mass > 35 then
-		Mass = math.ceil((RagMass or Mass) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
+		Mass = math.ceil((RagMass or Mass) ^ .5) -- exponent to keep yield from stupidheavy objects from ruining the game
 	end
 
 	-- again, more corrections
@@ -808,7 +808,7 @@ function JMod.GetSalvageYield(ent)
 		Mass = Mass / 2
 	end
 
-	if Mass > 10000 then return {}, "cannot salvage: too large" end
+	if Mass > 5000 then return {}, "cannot salvage: too large" end
 	if ent:IsNPC() or ent:IsPlayer() then return {}, (tostring(ent.PrintName or "They") .. " don't want to be salvaged") or ".." end
 	
 	local AnnoyedReplyTable = {
@@ -876,7 +876,7 @@ function JMod.GetSalvageYield(ent)
 
 	for k, v in pairs(Info) do
 		if ScaleByMass then
-			Results[k] = math.ceil(v * Mass * 1.5 * JMod.Config.ResourceEconomy.SalvageYield)
+			Results[k] = math.ceil(v * Mass * 0.25 * JMod.Config.ResourceEconomy.SalvageYield)
 		else
 			Results[k] = math.ceil(v * .9)
 		end
