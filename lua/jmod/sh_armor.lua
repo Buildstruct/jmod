@@ -1118,7 +1118,7 @@ function JMod.GenerateArmorEntities(tbl)
 		armorent.Base = "ent_jack_gmod_ezarmor"
 		armorent.PrintName = info.PrintName or class
 		if info.Spawnable == nil then
-			armorent.Spawnable = true
+			armorent.Spawnable = false
 		else
 			armorent.Spawnable = info.Spawnable
 		end

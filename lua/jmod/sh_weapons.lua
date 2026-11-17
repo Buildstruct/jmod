@@ -473,7 +473,7 @@ function JMod.LoadAmmoTable(tbl)
 			local BoxEnt = {}
 			BoxEnt.Base = "ent_jack_gmod_ezammobox"
 			BoxEnt.PrintName = "EZ " .. k
-			BoxEnt.Spawnable = true
+			BoxEnt.Spawnable = false
 			BoxEnt.AdminOnly = v.AdminOnly or false
 			BoxEnt.Category = v.Category or "JMod - EZ Special Ammo"
 			BoxEnt.EZammo = k
@@ -500,7 +500,7 @@ function JMod.GenerateWeaponEntities(tbl)
 		WeaponEnt.Base = info.BaseEnt or "ent_jack_gmod_ezweapon"
 		WeaponEnt.PrintName = info.PrintName or name
 		if info.Spawnable == nil then
-			WeaponEnt.Spawnable = true
+			WeaponEnt.Spawnable = false
 		else
 			WeaponEnt.Spawnable = info.Spawnable
 		end
