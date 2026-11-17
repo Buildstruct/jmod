@@ -374,7 +374,7 @@ local SalvagingTable = {
 	},
 	item = {
 		[JMod.EZ_RESOURCE_TYPES.POWER] = .3,
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
+		--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .01,
 		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = .3
 	},
 	glassbottle = {
@@ -447,23 +447,23 @@ local SalvagingTable = {
 		--[JMod.EZ_RESOURCE_TYPES.TITANIUM] = .1
 	},
 	gm_torpedo = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
 		--[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = .4,
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .1
+		--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .1
 	},
 	phx_ww2bomb = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
 		--[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = .4,
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .01
+		--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .01
 	},
 	phx_explosiveball = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
 		--[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = .4,
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .01
+		--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .01
 	},
 	grenade = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-		[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = .7
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
+		--[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = .7
 	},
 	crowbar = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .8
@@ -539,16 +539,16 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"oildrum"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.OIL] = .3,
-				[JMod.EZ_RESOURCE_TYPES.FUEL] = .1
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
+				--[JMod.EZ_RESOURCE_TYPES.OIL] = .3,
+				--[JMod.EZ_RESOURCE_TYPES.FUEL] = .1
 			}
 		},
 		{
 			substrings = {"vendingmachine"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
+				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
 				[JMod.EZ_RESOURCE_TYPES.WATER] = .3,
 				[JMod.EZ_RESOURCE_TYPES.NUTRIENTS] = .3
 			}
@@ -556,45 +556,45 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"machine", "laundry_washer", "engine", "laundry_dryer"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .4,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
+				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .4,
+				--[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
 			}
 		},
 		{
 			substrings = {"generator0"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .3
+				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
+				--[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1,
+				--[JMod.EZ_RESOURCE_TYPES.COPPER] = .3
 			}
 		},
 		{
 			substrings = {"forklift"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .5,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .05,
+				--[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
+				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .5,
+				--[JMod.EZ_RESOURCE_TYPES.COPPER] = .05,
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1,
 				[JMod.EZ_RESOURCE_TYPES.RUBBER] = .1,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .05,
-				[JMod.EZ_RESOURCE_TYPES.LEAD] = .05
+				--[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .05,
+				--[JMod.EZ_RESOURCE_TYPES.LEAD] = .05
 			}
 		},
 		{
 			substrings = {"propane", "coolingtank"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.GAS] = .6
+				[JMod.EZ_RESOURCE_TYPES.GAS] = .1
 			}
 		},
 		{
 			substrings = {"gaspump", "gascan"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.FUEL] = .6
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
+				--[JMod.EZ_RESOURCE_TYPES.FUEL] = .6
 			}
 		},
 		{
@@ -602,23 +602,23 @@ local SpecializedSalvagingTable = {
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
 				[JMod.EZ_RESOURCE_TYPES.GLASS] = .5,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0
 			}
 		},
 		{
 			substrings = {"radio", "receiver", "monitor", "consolebox"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .2,
-				[JMod.EZ_RESOURCE_TYPES.GOLD] = .05,
-				[JMod.EZ_RESOURCE_TYPES.SILVER] = .1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0,
+				[JMod.EZ_RESOURCE_TYPES.GOLD] = 0,
+				[JMod.EZ_RESOURCE_TYPES.SILVER] = 0,
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1
 			}
 		},
 		{
 			substrings = {"combine_soldier", "combine_super_soldier"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = .3,
+				[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 0,
 				[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .3
 			}
 		},
@@ -632,33 +632,33 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"helicopter"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.TITANIUM] = .1,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .2,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .1,
-				[JMod.EZ_RESOURCE_TYPES.LEAD] = .05
+				[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 0,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 0,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0,
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = 0.5
 			}
 		},
 		{
 			substrings = {"train0"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .3,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .3
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0
 			}
 		},
 		{
 			substrings = {"battery"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .2,
-				[JMod.EZ_RESOURCE_TYPES.LEAD] = .5,
-				[JMod.EZ_RESOURCE_TYPES.POWER] = 5
+				[JMod.EZ_RESOURCE_TYPES.LEAD] = 0,
+				[JMod.EZ_RESOURCE_TYPES.POWER] = 0
 			}
 		},
 		{
 			substrings = {"pipe"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.LEAD] = .2,
+				[JMod.EZ_RESOURCE_TYPES.LEAD] = 0,
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .5
 			}
 		},
@@ -666,48 +666,48 @@ local SpecializedSalvagingTable = {
 			substrings = {"ammocrate"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .1,
-				[JMod.EZ_RESOURCE_TYPES.AMMO] = .7
+				[JMod.EZ_RESOURCE_TYPES.AMMO] = .01
 			}
 		},
 		{
 			substrings = {"garbage_plasticbottle"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1,
-				[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = .8
+				[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = .1
 			}
 		},
 		{
 			substrings = {"/blu/tanks/", "_apc"}, -- simphys tanks and HL2 APCs
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .3,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .05,
-				[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = .1,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0,
+				[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 0,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 0,
 				[JMod.EZ_RESOURCE_TYPES.RUBBER] = .05,
-				[JMod.EZ_RESOURCE_TYPES.LEAD] = .05
+				[JMod.EZ_RESOURCE_TYPES.LEAD] = 0
 			}
 		},
 		{
 			substrings = {"computer", "/props_lab/"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 0
 			}
 		},
 		{
 			substrings = {"sink", "mooring_cleat"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .5,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .3
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0
 			}
 		},
 		{
 			substrings = {"pot"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .4,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .1
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0
 			}
 		},
 		{
@@ -726,7 +726,7 @@ local SpecializedSalvagingTable = {
 			substrings = {"metalbucket"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .6,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0
 			}
 		},
 		{
@@ -750,8 +750,8 @@ local SpecializedSalvagingTable = {
 				[JMod.EZ_RESOURCE_TYPES.RUBBER] = .25,
 				[JMod.EZ_RESOURCE_TYPES.PAPER] = .2,
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .05,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
-				[JMod.EZ_RESOURCE_TYPES.COPPER] = .05
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0
 			}
 		}
 	}
