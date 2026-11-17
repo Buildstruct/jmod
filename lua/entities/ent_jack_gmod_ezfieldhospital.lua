@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Automated Field Hospital"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = "glhfggwpezpznore"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---

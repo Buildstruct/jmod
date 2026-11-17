@@ -6,7 +6,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Bucket"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ENT.DropClass = "wep_jack_gmod_ezbucket"
 ---

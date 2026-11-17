@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = "Reusable mount for snapping on munitions"
 ENT.PrintName = "EZ Hardpoint"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

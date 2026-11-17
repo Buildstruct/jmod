@@ -6,7 +6,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Heavy Rocket"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

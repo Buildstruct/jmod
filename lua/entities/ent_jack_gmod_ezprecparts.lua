@@ -4,7 +4,7 @@ ENT.Base = "ent_jack_gmod_ezresource"
 ENT.PrintName = "EZ Precision Parts Box"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/precision parts.png"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS

@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Fabricator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = "glhfggwpezpznore"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ---

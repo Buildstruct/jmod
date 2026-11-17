@@ -6,7 +6,7 @@ ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Detpack"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 --- func_breakable
 ENT.JModPreferredCarryAngles = Angle(0, -90, 90)

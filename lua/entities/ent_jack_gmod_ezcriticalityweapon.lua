@@ -5,7 +5,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Criticality Weapon"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

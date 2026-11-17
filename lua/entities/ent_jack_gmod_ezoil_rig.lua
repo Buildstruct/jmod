@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Oil Rig"
 ENT.Category = "JMod - EZ Machines"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---

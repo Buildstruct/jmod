@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Auger Drill"
 ENT.Category = "JMod - EZ Machines"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---

@@ -6,7 +6,7 @@ ENT.PrintName = "EZ Power Bank"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)

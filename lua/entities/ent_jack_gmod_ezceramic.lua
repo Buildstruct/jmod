@@ -4,7 +4,7 @@ ENT.Base = "ent_jack_gmod_ezresource"
 ENT.PrintName = "EZ Ceramic Block"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/ceramic.png"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.CERAMIC

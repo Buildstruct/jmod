@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Resource Crate"
 ENT.Author = "Jackarunda, TheOnly8Z"
 ENT.Category = "JMod - EZ Misc."
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

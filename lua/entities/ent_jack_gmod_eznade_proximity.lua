@@ -4,7 +4,7 @@ ENT.Base = "ent_jack_gmod_ezmininade"
 ENT.Author = "Jackarunda, TheOnly8Z"
 ENT.PrintName = "EZminiNade-Proximity"
 ENT.Category = "JMod - EZ Explosives"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.Material = "models/mats_jack_nades/gnd_red"
 
 ENT.Hints = {"mininade", "mine friends"}

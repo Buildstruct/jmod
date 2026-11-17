@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Fluid Bottler"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/compressor/compressorbake.mdl"

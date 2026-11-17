@@ -5,7 +5,7 @@ ENT.Author = "AdventureBoots, Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "A bomb that deploys seeking anti-tank skeets"
 ENT.PrintName = "EZ Cluster Buster" -- this is effectively a miniature CBU-97
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

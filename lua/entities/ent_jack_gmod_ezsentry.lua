@@ -7,7 +7,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = "glhfggwpezpznore"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 --- JMod specific stuff
 ENT.SpawnHeight = 15

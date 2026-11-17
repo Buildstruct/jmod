@@ -6,7 +6,7 @@ ENT.PrintName = "EZ Aid Radio"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = "glhfggwpezpznore"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ----
 ENT.NoSitAllowed = true

@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Micro Black Hole Generator"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

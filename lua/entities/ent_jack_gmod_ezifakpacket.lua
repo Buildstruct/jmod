@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.PrintName = "EZ IFAK"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ---

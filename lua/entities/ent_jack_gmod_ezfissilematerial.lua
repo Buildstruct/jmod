@@ -4,7 +4,7 @@ ENT.Base = "ent_jack_gmod_ezresource"
 ENT.PrintName = "EZ Fissile Material"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/fissile material.png"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL

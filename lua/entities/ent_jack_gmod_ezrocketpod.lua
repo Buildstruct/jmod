@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = "EZ method for loading rockets"
 ENT.PrintName = "EZ Rocket Pod"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
