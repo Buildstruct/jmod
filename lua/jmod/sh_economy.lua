@@ -799,8 +799,8 @@ function JMod.GetSalvageYield(ent)
 			RagMass = (RagMass or 0) + RagPhys:GetMass()
 		end
 	end
-	if Mass > 35 then
-		Mass = math.ceil((RagMass or Mass) ^ .5) -- exponent to keep yield from stupidheavy objects from ruining the game
+	if Mass > 200 then
+		Mass = math.ceil((RagMass or Mass) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
 	end
 
 	-- again, more corrections
