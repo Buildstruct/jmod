@@ -1511,7 +1511,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 20,
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 20,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 30,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 20,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20
 				},
 				category = "Resources",
@@ -1524,12 +1524,23 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 2,
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 2,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 3,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 2
 				},
 				category = "Resources",
 				craftingType = "fabricator",
 				description = "10 precision parts used for use in high-powered machines and weapons."
+			},
+			["EZ Precision Parts, x20"] = {
+				results = {"ent_jack_gmod_ezprecparts", 1, 20},
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 15,
+					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 25
+				},
+				category = "Resources",
+				craftingType = {"workbench", "craftingtable"},
+				description = "20 precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Advanced Parts, x50"] = {
 				results = {"ent_jack_gmod_ezadvparts", 1, 50},

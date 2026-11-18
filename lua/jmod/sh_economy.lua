@@ -539,9 +539,9 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"oildrum"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
-				--[JMod.EZ_RESOURCE_TYPES.OIL] = .3,
-				--[JMod.EZ_RESOURCE_TYPES.FUEL] = .1
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+				[JMod.EZ_RESOURCE_TYPES.OIL] = .01,
+				[JMod.EZ_RESOURCE_TYPES.FUEL] = 0
 			}
 		},
 		{
@@ -556,8 +556,8 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"machine", "laundry_washer", "engine", "laundry_dryer"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2
-				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .4,
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .1,
 				--[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
 			}
 		},
@@ -567,7 +567,7 @@ local SpecializedSalvagingTable = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
 				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .2,
 				--[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1,
-				--[JMod.EZ_RESOURCE_TYPES.COPPER] = .3
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = .1
 			}
 		},
 		{
@@ -575,7 +575,7 @@ local SpecializedSalvagingTable = {
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
 				--[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
-				--[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .5,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .1,
 				--[JMod.EZ_RESOURCE_TYPES.COPPER] = .05,
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .1,
 				[JMod.EZ_RESOURCE_TYPES.RUBBER] = .1,
@@ -632,9 +632,9 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"helicopter"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 0,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0,
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0,
+				[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 0.1,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0.1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 0.1,
 				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 0,
 				[JMod.EZ_RESOURCE_TYPES.COPPER] = 0,
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = 0.5
@@ -658,7 +658,7 @@ local SpecializedSalvagingTable = {
 		{
 			substrings = {"pipe"},
 			yield = {
-				[JMod.EZ_RESOURCE_TYPES.LEAD] = 0,
+				[JMod.EZ_RESOURCE_TYPES.LEAD] = 0.1,
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .5
 			}
 		},
@@ -726,7 +726,7 @@ local SpecializedSalvagingTable = {
 			substrings = {"metalbucket"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .6,
-				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 0.1
 			}
 		},
 		{

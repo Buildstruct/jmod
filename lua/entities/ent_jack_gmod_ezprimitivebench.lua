@@ -280,7 +280,7 @@ if(SERVER)then
 		if not (IsValid(ent) and IsValid(ent:GetPhysicsObject())) then return false end
 		if (ent:GetClass() ~= "prop_physics") then return false end
 		if not table.HasValue(SalvageableMats, ent:GetMaterialType()) then return false end
-		if ent:GetPhysicsObject():GetMass() <= 35 then return true end
+		if ent:GetPhysicsObject():GetMass() <= 250 then return true end
 		return false
 	end
 
